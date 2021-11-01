@@ -2,27 +2,51 @@ param (
     [Parameter(Mandatory = $true)][string]$mailboxIdentity
 )
 
-function identifyPolicyOrHoldType ([string]$policy)
+function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly)
 {
     if($policy.substring(0,4) -eq "UniH")
     {
         #eDiscovery Hold
-        return "eDiscovery"
+        if($typeOnly){
+            return "eDiscovery"
+        }
     } elseif ((($policy.substring(0,1) -eq "c") -or ($policy.substring(0,3) -eq "cld")) -and ($policy -ne "ComplianceTagHold")) {
         #inPlace Hold
-        return "InPlace"
+        if($typeOnly){
+            return "InPlace"
+        }
     } elseif (($policy.substring(0,3) -eq "mbx") -or ($policy.substring(0,3) -eq "skp") -or ($policy.substring(0,4) -eq "-mbx") -or ($policy.substring(0,3) -eq "grp")) {
         #M365 retention policy
-        return "Retention"
+        if($typeOnly){
+            return "Retention"
+        } else {
+            if(($policy.substring(0,3) -eq "mbx") -or ($policy.substring(0,3) -eq "skp") -or ($policy.substring(0,3) -eq "grp")){
+                $policyGuid = $policy.trim($policy.Substring(0,3))
+                $policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
+                return $policyGuid
+            } elseif ($policy.substring(0,4) -eq "-mbx"){
+                $policyGuid = $policy.trim($policy.Substring(0,4))
+                $policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
+                return $policyGuid   
+            } else {
+                return
+            }
+        }
     } elseif ($policy -eq "LitigationHold"){
         #LitHold
-        return "LitigationHold"
+        if($typeOnly){
+            return "LitigationHold"
+        }
     } elseif ($policy -eq "ComplianceTagHold"){
         #M365 label policy
-        return "LabelHold"
+        if($typeOnly){
+            return "LabelHold"
+        }
     } elseif ($policy -eq "DelayReleaseHold"){
-        #Delay Release Hold?
-        return "DelayHoldApplied"
+        #Delay Release Hold
+        if($typeOnly){
+            return "DelayHoldApplied"
+        }
     } else {
         #can't determine type
         return "UNKNOWN"
@@ -40,7 +64,7 @@ function identifyRetentionPolicyAction ([string]$policy)
         return "RetainOnly"
     } elseif ($type -eq ":3"){
         #Hold and Delete
-        return "HoldThenDelete"
+        return "RetainThenDelete"
     } elseif ($policy.substring(0,1) -eq "-"){
         #exclusion
         return "Excluded"
@@ -209,19 +233,20 @@ if($ht.MailboxLog.Length -gt 2){
 
     foreach ($logEntry in $logEntries)
     {   
-        $holdType = identifyPolicyOrHoldType $logEntry.hid
         $row = $holdLog.NewRow()
         $row.Applied = $logEntry.lsd | Get-Date
-        $row.HoldType = $holdType
-        $row.PolicyName = identifyPolicyName $holdType $logEntry.hid $retentionPolicies
+        $row.HoldType = identifyPolicyOrHold $logEntry.hid $true
+        $row.PolicyName = identifyPolicyOrHold $logEntry.hid $false
+        #$row.PolicyName = identifyPolicyName $holdType $logEntry.hid $retentionPolicies
         if($holdType -eq "Retention"){
             $row.PolicyAction = identifyRetentionPolicyAction $logEntry.hid
         }
         if($logEntry.ed -ne "0001-01-01T00:00:00.0000000"){
             $row.Removed = $logEntry.ed | Get-Date
         } elseif ($holdType -eq "DelayHoldApplied"){
-            $estimatedRemoval = ($logEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
-            $row.Removed = "Estimated: ~$estimatedRemoval"
+            $estimatedRemovalStart = ($logEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
+            $estimatedRemovalEnd = ($logEntry.lsd | Get-Date).AddDays(37) | Get-Date -Format "MM/dd/yyyy"
+            $row.Removed = "Estimated: ~$estimatedRemovalStart-$estimatedRemovalEnd"
         }
         $holdLog.Rows.Add($row)
     }
@@ -250,24 +275,26 @@ if($hts.MailboxLog.Length -gt 2){
     $substrateHoldLog.TableName = "substrateHoldHistory"
 
     $substrateHoldLog.Columns.Add("Applied") | Out-Null
+    $substrateHoldLog.Columns.Add("PolicyName") | Out-Null
     $substrateHoldLog.Columns.Add("HoldType") | Out-Null
     $substrateHoldLog.Columns.Add("PolicyAction") | Out-Null
     $substrateHoldLog.Columns.Add("Removed") | Out-Null
 
     foreach ($substrateLogEntry in $substrateLogEntries)
     {   
-        $holdType = identifyPolicyOrHoldType $substrateLogEntry.hid
         $subRow = $substrateHoldLog.NewRow()
         $subRow.Applied = $substrateLogEntry.lsd | Get-Date
-        $subRow.HoldType = $holdType
+        $subRow.HoldType = identifyPolicyOrHold $logEntry.hid $true
+        $subRow.PolicyName = identifyPolicyOrHold $logEntry.hid $false
         if($holdType -eq "Retention"){
             $subRow.PolicyAction = identifyRetentionPolicyAction $substrateLogEntry.hid
         }
         if($substrateLogEntry.ed -ne "0001-01-01T00:00:00.0000000"){
             $subRow.Removed = $substrateLogEntry.ed | Get-Date
         } elseif ($holdType -eq "DelayHoldApplied"){
-            $estimatedRemoval = ($substrateLogEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
-            $subRow.Removed = "Estimated: ~$estimatedRemoval"
+            $estimatedRemovalStart = ($substrateLogEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
+            $estimatedRemovalEnd = ($substrateLogEntry.lsd | Get-Date).AddDays(37) | Get-Date -Format "MM/dd/yyyy"
+            $subRow.Removed = "Estimated: ~$estimatedRemovalStart-$estimatedRemovalEnd"
         }
         $substrateHoldLog.Rows.Add($subRow)
     }
