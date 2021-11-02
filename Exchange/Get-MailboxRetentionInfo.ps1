@@ -128,6 +128,7 @@ $gotAppRetentionPolicies = $false
 $gotLegalCases = $false
 $gotAeDLegalCases = $false
 $eDiscoveryCases = @()
+$retentionPolicies = @()
 
 #### Verify connectivity
 Write-Host -ForegroundColor gray -BackgroundColor black "Connectivity:"
@@ -193,7 +194,7 @@ Try{
 #get retention policies
 Try{
     Write-Host "Retention Policies: " -NoNewLine
-    $retentionPolicies = Get-RetentionCompliancePolicy -ErrorAction Stop
+    $sccRetentionPolicies = Get-RetentionCompliancePolicy -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotRetentionPolicies = $true
 } catch {
@@ -201,6 +202,15 @@ Try{
     write-host -ForegroundColor Red "You may not have required permissions."
     $gotRetentionPolicies = $false
     exit
+}
+
+if($gotRetentionPolicies -and ($sccRetentionPolicies -ne $null)){
+    foreach ($sccRetentionPolicy in $sccRetentionPolicies){
+        $retentionPolicies += [pscustomobject] @{
+            Guid   = $sccRetentionPolicy.Guid
+            Name = $sccRetentionPolicy.Name
+        }        
+    }
 }
 
 #get app retention policies
@@ -214,6 +224,15 @@ Try{
     write-host -ForegroundColor Red "You may not have required permissions."
     $gotAppRetentionPolicies = $false
     exit
+}
+
+if($gotAppRetentionPolicies -and ($appRetentionPolicies -ne $null)){
+    foreach ($appRetentionPolicy in $appRetentionPolicies){
+        $retentionPolicies += [pscustomobject] @{
+            Guid   = $appRetentionPolicy.Guid
+            Name = $appRetentionPolicy.Name
+        }        
+    }
 }
 
 #get cases
@@ -399,7 +418,7 @@ if($hts.MailboxLog.Length -gt 2){
         if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
             $policySet = $eDiscoveryCases
         } else {
-            $policySet = $appRetentionPolicies
+            $policySet = $retentionPolicies
         }
 
         $subRow = $substrateHoldLog.NewRow()
