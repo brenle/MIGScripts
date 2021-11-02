@@ -2,13 +2,19 @@ param (
     [Parameter(Mandatory = $true)][string]$mailboxIdentity
 )
 
-function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly)
+function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrate)
 {
     if($policy.substring(0,4) -eq "UniH")
     {
         #eDiscovery Hold
         if($typeOnly){
             return "eDiscovery"
+        } else {
+            if ($policy.substring(0,4) -eq "UniH"){
+                return $policy.trim($policy.Substring(0,4))
+            } else {
+                return
+            }
         }
     } elseif ((($policy.substring(0,1) -eq "c") -or ($policy.substring(0,3) -eq "cld")) -and ($policy -ne "ComplianceTagHold")) {
         #inPlace Hold
@@ -47,6 +53,13 @@ function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly)
         if($typeOnly){
             return "DelayHoldApplied"
         }
+    } elseif ($substrate){
+        #substrate
+        if($typeOnly){
+            return "Retention"
+        } else {
+            return $policy
+        }
     } else {
         #can't determine type
         return "UNKNOWN"
@@ -73,31 +86,48 @@ function identifyRetentionPolicyAction ([string]$policy)
         return "UNKNOWN"
     }
 }
-###########################################
-# Need to finish.
-function stripGuid($type, $guid)
-{
-    $pen = "Get"
-    return $pen
-}
 
 function identifyPolicyName ($type, $policyGuid, $policies)
 {
     if($type -eq "Retention"){
         $policyName = ($policies | ?{$_.Guid -eq $policyGuid}).Name
         if($policyName -ne $null){
+            #policy found
             return $policyName
         } else {
-            return "UNKNOWN"
+            #policy not found (probably permissions)
+            return $policyGuid
+        }
+    } elseif($type -eq "eDiscovery"){
+        
+        $caseHold = Get-CaseHoldPolicy $policyGuid
+        $caseName = ($policies | ?{$_.Identity -eq $caseHold.CaseId}).Name
+        #$caseType = ($policies | ?{$_.Identity -eq $caseHold.CaseId}).CaseType
+        if($caseName -ne $null){
+            #case could be found
+            return $caseName
+        } else {
+            #case not found (probably no permissions)
+            return $policyGuid
         }
     }
 }
-##########################################
+
+function coreOrAdvanced ($caseName, $policies){
+    $type = ($policies | ?{$_.Name -eq $caseName}).CaseType
+    return $type
+}
 
 #Declare variables
-$connected = $true
 $under10MB = $false
 $elcNeverRun = $false
+$sccConnected = $false
+$gotOrgConfig = $false
+$gotRetentionPolicies = $false
+$gotAppRetentionPolicies = $false
+$gotLegalCases = $false
+$gotAeDLegalCases = $false
+$eDiscoveryCases = @()
 
 #### Verify connectivity
 Write-Host -ForegroundColor gray -BackgroundColor black "Connectivity:"
@@ -124,10 +154,12 @@ Write-Host " Security & Compliance Center PowerShell: " -NoNewLine
 try{
     $testCommand = Get-Command Get-RetentionCompliancePolicy -ErrorAction Stop | Out-Null
     Write-Host -ForegroundColor Green "Connected"
+    $sccConnected = $true
 } catch {
     Write-Host -ForegroundColor Red "Not Connected"
-    Write-Host -ForegroundColor Red "You must be connected to Security & Compliance Center PowerShell Module."
-    Write-host -ForegroundColor Red ">> TIP: Run 'Connect-IPPSSession'"
+    #Write-Host -ForegroundColor Yellow ">> NOTE: We will proceed but cannot resolve policy names."
+    Write-host -ForegroundColor Red ">> TIP: To connect, run 'Connect-IPPSSession'"
+    $sccConected = $false
     exit
 }
 
@@ -150,9 +182,11 @@ Try{
     Write-Host "Organization Config: " -NoNewLine
     $orgConfig = Get-OrganizationConfig -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
+    $gotOrgConfig = $true
 } catch {
     write-Host -ForegroundColor Red "ERROR"
     write-host -ForegroundColor Red "You may not have required permissions."
+    $gotOrgConfig = $false
     exit
 }
 
@@ -161,10 +195,72 @@ Try{
     Write-Host "Retention Policies: " -NoNewLine
     $retentionPolicies = Get-RetentionCompliancePolicy -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
+    $gotRetentionPolicies = $true
 } catch {
     write-Host -ForegroundColor Red "ERROR"
     write-host -ForegroundColor Red "You may not have required permissions."
+    $gotRetentionPolicies = $false
     exit
+}
+
+#get app retention policies
+Try{
+    Write-Host "App Retention Policies: " -NoNewLine
+    $appRetentionPolicies = Get-AppRetentionCompliancePolicy -ErrorAction Stop
+    Write-host -ForegroundColor Green "OK"
+    $gotAppRetentionPolicies = $true
+} catch {
+    write-Host -ForegroundColor Red "ERROR"
+    write-host -ForegroundColor Red "You may not have required permissions."
+    $gotAppRetentionPolicies = $false
+    exit
+}
+
+#get cases
+Try{
+    Write-Host "eDiscovery Cases: " -NoNewLine
+    $eDiscoveryCoreCases = Get-ComplianceCase -CaseType eDiscovery -ErrorAction Stop
+    Write-host -ForegroundColor Green "OK"
+    $gotLegalCases = $true
+} catch {
+    write-Host -ForegroundColor Red "ERROR"
+    write-host -ForegroundColor Yellow "You may not have required permissions.  We will continue but will not map case names."
+    $gotLegalCases = $false
+    #exit
+}
+
+if($gotLegalCases -and ($eDiscoveryCoreCases -ne $null)){
+    foreach ($ediscoveryCoreCase in $eDiscoveryCoreCases){
+        $eDiscoveryCases += [pscustomobject] @{
+            Identity   = $eDiscoveryCoreCase.Identity
+            Name = $eDiscoveryCoreCase.Name
+            CaseType  = $eDiscoveryCoreCase.CaseType
+        }
+    }
+}
+
+#get AED cases
+Try{
+    Write-Host "Advanced eDiscovery Cases: " -NoNewLine
+    $AeDCases = Get-ComplianceCase -CaseType AdvancedEdiscovery -ErrorAction Stop
+    Write-host -ForegroundColor Green "OK"
+    $gotAeDLegalCases = $true
+} catch {
+    write-Host -ForegroundColor Red "ERROR"
+    write-Host $error[0]
+    write-host -ForegroundColor Yellow "You may not have required permissions.  We will continue but will not map case names."
+    $gotAeDLegalCases = $false
+    #exit
+}
+
+if($gotAeDLegalCases -and ($AeDCases -ne $null)){
+    foreach($AeDCase in $AeDCases){
+        $eDiscoveryCases += [pscustomobject] @{
+            Identity   = $AeDCase.Identity
+            Name = $AeDCase.Name
+            CaseType  = $AeDCase.CaseType
+        }
+    }
 }
 
 Write-Host -ForegroundColor Gray -BackgroundColor Black -NoNewLine "Target Mailbox:"
@@ -211,7 +307,7 @@ if($targetMailbox.DelayReleaseHoldApplied){
     Write-host -ForegroundColor yellow ">> NOTE: The Delay Release Hold will expire after 30 days. Check the substrate hold history below for an estimated date."
 }
 
-### InplacHolds
+### TODO: InplaceHolds
 
 ### Get Mailbox Hold History ###
 $ht = Export-MailboxDiagnosticLogs $targetMailbox.UserPrincipalName -ComponentName HoldTracking
@@ -226,27 +322,43 @@ if($ht.MailboxLog.Length -gt 2){
     $holdLog.TableName = "mailboxHoldHistory"
     
     $holdLog.Columns.Add("Applied") | Out-Null
-    $holdLog.Columns.Add("PolicyName") | Out-Null
+    $holdLog.Columns.Add("NameOrGuid") | Out-Null
     $holdLog.Columns.Add("HoldType") | Out-Null
     $holdLog.Columns.Add("PolicyAction") | Out-Null
     $holdLog.Columns.Add("Removed") | Out-Null
 
     foreach ($logEntry in $logEntries)
     {   
+        $holdType = identifyPolicyOrHold $logEntry.hid $true $false
+        $holdGuid = identifyPolicyOrHold $logEntry.hid $false $false
+
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $policySet = $eDiscoveryCases
+        } else {
+            $policySet = $retentionPolicies
+        }
+
         $row = $holdLog.NewRow()
         $row.Applied = $logEntry.lsd | Get-Date
-        $row.HoldType = identifyPolicyOrHold $logEntry.hid $true
-        $row.PolicyName = identifyPolicyOrHold $logEntry.hid $false
-        #$row.PolicyName = identifyPolicyName $holdType $logEntry.hid $retentionPolicies
+        #$row.HoldType = $holdType
+        $policy = identifyPolicyName $holdType $holdGuid $policySet
+        $row.NameOrGuid = $policy
         if($holdType -eq "Retention"){
             $row.PolicyAction = identifyRetentionPolicyAction $logEntry.hid
         }
+        
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $row.HoldType = coreOrAdvanced $policy $policySet
+        } else {
+            $row.HoldType = $holdType
+        }
+        
         if($logEntry.ed -ne "0001-01-01T00:00:00.0000000"){
             $row.Removed = $logEntry.ed | Get-Date
         } elseif ($holdType -eq "DelayHoldApplied"){
             $estimatedRemovalStart = ($logEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
             $estimatedRemovalEnd = ($logEntry.lsd | Get-Date).AddDays(37) | Get-Date -Format "MM/dd/yyyy"
-            $row.Removed = "Estimated: ~$estimatedRemovalStart-$estimatedRemovalEnd"
+            $row.Removed = "ETA: ~$estimatedRemovalStart-$estimatedRemovalEnd"
         }
         $holdLog.Rows.Add($row)
     }
@@ -255,7 +367,7 @@ if($ht.MailboxLog.Length -gt 2){
 
     #need to fix sort by date
     Write-Host -BackgroundColor black -ForegroundColor gray "Mailbox Hold History:"
-    $ds.Tables["mailboxHoldHistory"] | Format-Table #| Sort-Object -Property {$_.Applied} -Descending
+    $ds.Tables["mailboxHoldHistory"] | Format-Table
 } else {
     Write-Host -ForegroundColor Yellow "WARNING: No hold history found for this mailbox!"
     if($elcNeverRun){
@@ -275,26 +387,39 @@ if($hts.MailboxLog.Length -gt 2){
     $substrateHoldLog.TableName = "substrateHoldHistory"
 
     $substrateHoldLog.Columns.Add("Applied") | Out-Null
-    $substrateHoldLog.Columns.Add("PolicyName") | Out-Null
+    $substrateHoldLog.Columns.Add("NameOrGuid") | Out-Null
     $substrateHoldLog.Columns.Add("HoldType") | Out-Null
-    $substrateHoldLog.Columns.Add("PolicyAction") | Out-Null
     $substrateHoldLog.Columns.Add("Removed") | Out-Null
 
     foreach ($substrateLogEntry in $substrateLogEntries)
     {   
+        $holdType = identifyPolicyOrHold $substrateLogEntry.hid $true $true
+        $holdGuid = identifyPolicyOrHold $SubstrateLogEntry.hid $false $true
+
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $policySet = $eDiscoveryCases
+        } else {
+            $policySet = $appRetentionPolicies
+        }
+
         $subRow = $substrateHoldLog.NewRow()
         $subRow.Applied = $substrateLogEntry.lsd | Get-Date
-        $subRow.HoldType = identifyPolicyOrHold $logEntry.hid $true
-        $subRow.PolicyName = identifyPolicyOrHold $logEntry.hid $false
-        if($holdType -eq "Retention"){
-            $subRow.PolicyAction = identifyRetentionPolicyAction $substrateLogEntry.hid
+        #$subRow.HoldType = $holdType
+        $policy = identifyPolicyName $holdType $holdGuid $policySet
+        $subRow.NameOrGuid = $policy
+
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $subRow.HoldType = coreOrAdvanced $policy $policySet
+        } else {
+            $subRow.HoldType = $holdType
         }
+        
         if($substrateLogEntry.ed -ne "0001-01-01T00:00:00.0000000"){
             $subRow.Removed = $substrateLogEntry.ed | Get-Date
         } elseif ($holdType -eq "DelayHoldApplied"){
             $estimatedRemovalStart = ($substrateLogEntry.lsd | Get-Date).AddDays(30) | Get-Date -Format "MM/dd/yyyy"
             $estimatedRemovalEnd = ($substrateLogEntry.lsd | Get-Date).AddDays(37) | Get-Date -Format "MM/dd/yyyy"
-            $subRow.Removed = "Estimated: ~$estimatedRemovalStart-$estimatedRemovalEnd"
+            $subRow.Removed = "ETA: ~$estimatedRemovalStart-$estimatedRemovalEnd"
         }
         $substrateHoldLog.Rows.Add($subRow)
     }
@@ -303,7 +428,7 @@ if($hts.MailboxLog.Length -gt 2){
 
     #need to fix sort by date
     Write-Host -BackgroundColor black -ForegroundColor gray "Substrate Hold History:"
-    $ds.Tables["substrateHoldHistory"] | Format-Table # | Sort-Object -Property {$_.Applied} -Descending
+    $ds.Tables["substrateHoldHistory"] | Format-Table
 } else {
     Write-Host -ForegroundColor Yellow "WARNING: No substrate hold history found for this mailbox!"
     if($elcNeverRun){
