@@ -1,11 +1,69 @@
+# Written by Brendon Lee (brenle@microsoft.com)
+# Please note that this script is provided only as an example script and with no support.
+# ----------------------------------------------
+# NOTE: You must be connected to Exchange Online PowerShell with permissions to run Get-Mailbox as a minimum to run this script
+#
+#### USAGE:
+#
+# To run the script and enter an OPATH query using a GUI:
+#     .\Validate-AdaptiveScopesOPATHQuery.ps1
+#
+# To run the script and extract an OPATH query from an existing scope:
+#     .\Validate-AdaptiveScopesOPATHQuery.ps1 -adaptiveScopeName [name of scope]
+#
+#     NOTE: This option will require being connected to SCC PowerShell with permissions to run Get-AdaptiveScope
+#
+# To run the script and supply a query via parameter:
+#
+#     .\Validate-AdaptiveScopesOPATHQuery.ps1 -rawQuery [OPATH query] -scopeType [User | Group]
+#
+#     NOTE: You must include -scopeType when using -rawQuery
+#
+#### OPTIONAL PARAMETERS:
+# -exportCsv = Exports full output of objects that match OPATH query to CSV file. No value is required with this parameter.
+# -csvPath [path] = Path to export Csv.  Default value is c:\temp\.
+# ----------------------------------------------
 param (
     # You can only provide no value, a RawQuery or an AdaptiveScopeName - not combined
     [ValidateScript({-not ($rawQuery)})][string]$adaptiveScopeName,
     [ValidateScript({-not ($adaptiveScopeName)})][string]$rawQuery,
-    [switch]$exportCsv = $false
-
-    ##TODO:  Need to figure out Group/User switch
+    [string]$scopeType,
+    [switch]$exportCsv = $false,
+    [string]$csvPath = "c:\temp\"
 )
+
+function quickValidation($query){
+    
+    #normalize query
+    $query = $query.ToLower()
+
+    #detect surrounding quotes
+    if($query.StartsWith('"') -or ($query.StartsWith("'"))){
+        Write-Host -ForegroundColor Red "FAIL"
+        Write-host -ForegroundColor Red ">> ERROR: OPATH Query cannot be enclosed in quotes."
+        exit
+    }
+
+    #detect boolean operator 
+    if($query.Contains("true")){
+        $location = $query.IndexOf("true")
+        if($query[$location -1] -eq "$"){
+            write-host -ForegroundColor Red "FAIL"
+            Write-Host -ForegroundColor Red ">> ERROR: OPATH query cannot contain boolean operators.  Instead use the boolean value, such as 'True'".
+            exit
+        }
+    }
+    if($query.Contains("false")){
+        $location = $query.IndexOf("false")
+        if($query[$location -1] -eq "$"){
+            write-host -ForegroundColor Red "FAIL"
+            Write-Host -ForegroundColor Red ">> ERROR: OPATH query cannot contain boolean operators.  Instead use the boolean value, such as 'False'".
+            exit
+        }
+    }
+
+
+}
 
 function determineElapsedTime($start, $end){
     $totalTime = $end - $start
@@ -20,10 +78,46 @@ function determineElapsedTime($start, $end){
     }
 }
 
+function getCsvFilepath([string]$path){
+    
+    # path should end with \
+    if (!$path.EndsWith("\"))
+    {
+        $path += "\"
+    }
+
+    # path should not be on root drive
+    if ($path.EndsWith(":\"))
+    {
+        $path += "temp\"
+    }
+    
+    # generate file name
+    $filename = "OPATHQueryResults-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
+
+    # verify folder exists, if not try to create it
+    if (!(Test-Path($path)))
+    {
+        try
+        {
+            New-Item -ItemType "directory" -Path $path -ErrorAction Stop | Out-Null
+        } catch {
+            write-host -ForegroundColor Red "FAILED"
+            Write-Host -ForegroundColor Red ">> ERROR: The directory '$path' could not be created."
+            Write-Host -ForegroundColor Red $error[0]
+            exit
+        }
+    }
+
+    return $path + $filename
+}
+
 $rawQueryGetMailboxPassed = $false
 $rawQueryGetRecipientPassed = $false
 $inactiveMailboxesFound = $false
 
+Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
+Write-host ""
 #verify EXO connectivity
 write-Host -ForegroundColor Cyan ".:| Verifying Required Connectivity |:."
 Write-Host ""
@@ -69,43 +163,56 @@ if($adaptiveScopeName){
         Write-Host -ForegroundColor Gray $adaptiveScopeName -NoNewline
         Write-host -ForegroundColor Cyan "'..." -NoNewline
         $adaptiveScope = Get-AdaptiveScope $adaptiveScopeName -ErrorAction Stop
-        Write-Host -ForegroundColor Green "OK"
     } catch {
         Write-Host -ForegroundColor Red "FAILED"
         Write-Host -ForegroundColor Red $error[0]
         exit
     }
-
-    Write-Host -ForegroundColor Cyan "- Scope Type: " -NoNewline
-    $scopeType = $adaptiveScope.LocationType
-    if($scopeType -eq "Site"){
-        Write-host -ForegroundColor Red $scopeType
+    
+    if($adaptiveScope.LocationType -eq "Site"){
+        Write-host -ForegroundColor Red "FAILED"
         Write-Host -ForegroundColor Red ">> ERROR: Site scopes do not support OPATH queries so cannot be used with this script."
         exit
     } else {
-        Write-host -ForegroundColor Green $scopeType
+        $scopeType = $adaptiveScope.LocationType
     }
 
-    Write-Host -ForegroundColor Cyan "- OPATH Query from '" -NoNewline
-    Write-Host -ForegroundColor Gray $adaptiveScopeName -NoNewline
-    Write-Host -ForegroundColor Cyan "': " -NoNewline
     if($adaptiveScope.RawQuery -eq ""){
         Write-Host -ForegroundColor Red "No Advanced Query Found"
         Write-Host -ForegroundColor Red ">> ERROR: This script cannot be used to test queries created in the simple query builder."
         exit
     } else {
-        Write-Host -ForegroundColor Green $adaptiveScope.RawQuery
         $queryToTest = $adaptiveScope.RawQuery
+        Write-Host -ForegroundColor Green "OK"
     }
 
 } elseif ($rawQuery){
+    
+    #normalize Scope Type
+    $TextInfo = (Get-Culture).TextInfo
+    $scopeType = $TextInfo.ToTitleCase($scopeType)
+    #I'm not sure if this works in other cultures, so just in case...
+    $scopeUser = $TextInfo.ToTitleCase("User")
+    $scopeGroup = $TextInfo.ToTitleCase("Group")
+
+    if(($scopeType -ne $scopeUser) -and ($scopeType -ne $scopeGroup)){
+        Write-host -ForegroundColor Red ">> ERROR: When using -rawQuery, you MUST provide a valid scope type. For example:"
+        Write-host -ForegroundColor Yellow ".\$($MyInvocation.MyCommand.Name) -rawQuery " -NoNewline
+        Write-Host -ForegroundColor Gray "[OPATH Query] " -NoNewline
+        Write-Host -ForegroundColor Yellow "-scopeType " -NoNewline
+        Write-Host -ForegroundColor Gray "User"
+        Write-Host -ForegroundColor Cyan "-- or --"   
+        Write-host -ForegroundColor Yellow ".\$($MyInvocation.MyCommand.Name) -rawQuery " -NoNewline
+        Write-Host -ForegroundColor Gray "[OPATH Query] " -NoNewline
+        Write-Host -ForegroundColor Yellow "-scopeType " -NoNewline
+        Write-Host -ForegroundColor Gray "Group"
+        exit
+    }
     Write-host ""
     Write-Host -ForegroundColor Cyan ".:| Validating Raw OPATH Query |:."
     Write-host ""
 
     $queryToTest = $rawQuery
-    Write-Host -ForegroundColor Cyan "- Query to Validate: " -NoNewline
-    Write-host -ForegroundColor Gray $queryToTest
 } else {
     Write-host ""
     Write-Host -ForegroundColor Cyan ".:| Validating OPATH Query - Enter a OPATH Query |:."
@@ -116,21 +223,23 @@ if($adaptiveScopeName){
 
     $queryInputForm = New-Object System.Windows.Forms.Form
     $queryInputForm.Text = "Enter OPATH Query to Validate"
-    $queryInputForm.Size = New-Object System.Drawing.Size(400,175)
+    $queryInputForm.Size = New-Object System.Drawing.Size(400,180)
     $queryInputForm.StartPosition = "CenterScreen"
     
     $validateButton = New-Object System.Windows.Forms.Button
-    $validateButton.Location = New-Object System.Drawing.Point(20,90)
+    $validateButton.Location = New-Object System.Drawing.Point(200,90)
     $validateButton.Text = "Validate"
     $validateButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+    $validateButton.TabIndex = 3
     
     $queryInputForm.AcceptButton = $validateButton
     $queryInputForm.Controls.Add($validateButton)
 
     $cancelButton = New-Object System.Windows.Forms.Button
-    $cancelButton.Location = New-Object System.Drawing.Point(100,90)
+    $cancelButton.Location = New-Object System.Drawing.Point(280,90)
     $cancelButton.Text = "Cancel"
     $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+    $cancelButton.TabIndex = 4
 
     $queryInputForm.AcceptButton = $cancelButton
     $queryInputForm.Controls.Add($cancelButton)
@@ -145,8 +254,28 @@ if($adaptiveScopeName){
     $queryInputBox = New-Object System.Windows.Forms.TextBox
     $queryInputBox.Location = New-Object System.Drawing.Point(20,60)
     $queryInputBox.Size = New-Object System.Drawing.Size(350,20)
+    $queryInputBox.TabIndex = 1
 
     $queryInputForm.Controls.Add($queryInputBox)
+
+    $selectScopeLabel = New-Object System.Windows.Forms.Label
+    $selectScopeLabel.Location = New-Object System.Drawing.Point(20,93)
+    $selectScopeLabel.Size = New-Object System.Drawing.Size(70,20)
+    $selectScopeLabel.Text = "Scope Type: "
+
+    $queryInputForm.Controls.Add($selectScopeLabel)
+
+    $scopeSelection = New-Object System.Windows.Forms.ComboBox
+    $scopeSelection.Location = New-Object System.Drawing.Point(90,90)
+    $scopeSelection.Size = New-Object System.Drawing.Size(50,20)
+    $scopeSelection.DropDownStyle = "Dropdownlist"
+    $scopeSelection.Width = 80
+    $scopeSelection.TabIndex = 2
+
+    $scopeSelection.Items.Add('User') | Out-Null
+    $scopeSelection.Items.Add('Group') | Out-Null
+    $scopeSelection.SelectedIndex = 0
+    $queryInputForm.Controls.Add($scopeSelection)
 
     $queryInputForm.Topmost = $true
     $queryInputForm.AcceptButton = $validateButton
@@ -166,6 +295,13 @@ if($adaptiveScopeName){
             Write-host -ForegroundColor Yellow ".\$($MyInvocation.MyCommand.Name) -rawQuery " -NoNewline
             Write-host -ForegroundColor Gray "[OPATH Query]"
             exit
+        } else {
+            if($scopeSelection.SelectedIndex -eq 0)
+            {
+                $scopeType = "User"
+            } else {
+                $scopeType = "Group"
+            }
         }
 
     } else {
@@ -175,8 +311,13 @@ if($adaptiveScopeName){
     }
 }
 
+Write-Host -ForegroundColor Cyan "- Query to Validate: " -NoNewline
+Write-host -ForegroundColor Gray $queryToTest
+Write-Host -ForegroundColor Cyan "- Scope Type: " -NoNewline
+WRite-host -ForegroundColor Gray $scopeType
+
 write-host -ForegroundColor Cyan "- Validating RawQuery (Quick)..." -NoNewline
-#call function to look for common mistakes
+quickValidation $queryToTest
 Write-host -ForegroundColor Green "PASSED"
 
 Write-Host -ForegroundColor Cyan "- Validating RawQuery (Full)..." -NoNewLine
@@ -256,7 +397,18 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     if(!$exportCsv){
         Write-Host -ForegroundColor Yellow "NOTE: Run the script with -ExportCSV if you want to export all results that matched the query."
     } else {
-        #export
+        Write-host -ForegroundColor Cyan "Exporting full results to CSV..." -NoNewline
+        $csvFile = getCsvFilepath $csvPath
+        try{
+            $mailboxes | Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
+            Write-host -ForegroundColor Green "OK"
+            Write-host -ForegroundColor Cyan ">> File location: $csvFile"
+        } catch {
+            write-host -ForegroundColor Red "FAILED"
+            Write-host -ForegroundColor Red ">> ERROR: Unable to export to '$csvFile'"
+            Write-Host -ForegroundColor Red $error[0]
+            exit
+        }
     }
 } else {
     Write-Host -ForegroundColor Red "FAILED"
