@@ -223,7 +223,7 @@ if($adaptiveScopeName){
 
     $queryInputForm = New-Object System.Windows.Forms.Form
     $queryInputForm.Text = "Enter OPATH Query to Validate"
-    $queryInputForm.Size = New-Object System.Drawing.Size(400,180)
+    $queryInputForm.Size = New-Object System.Drawing.Size(400,190)
     $queryInputForm.StartPosition = "CenterScreen"
     
     $validateButton = New-Object System.Windows.Forms.Button
@@ -276,6 +276,27 @@ if($adaptiveScopeName){
     $scopeSelection.Items.Add('Group') | Out-Null
     $scopeSelection.SelectedIndex = 0
     $queryInputForm.Controls.Add($scopeSelection)
+
+    $opathSupportedProperties = New-Object System.Windows.Forms.LinkLabel
+    $opathSupportedProperties.Location = New-Object System.Drawing.Point(20,130)
+    $opathSupportedProperties.Size = New-Object System.Drawing.Size(160,20)
+    $opathSupportedProperties.Text = "Supported OPATH Properties"
+    $opathSupportedProperties.add_Click({[system.Diagnostics.Process]::start("https://docs.microsoft.com/en-us/powershell/exchange/filter-properties?view=exchange-ps#filterable-properties")})
+    $queryInputForm.Controls.Add($opathSupportedProperties)
+
+    $opathSyntax = New-Object System.Windows.Forms.LinkLabel
+    $opathSyntax.Location = New-Object System.Drawing.Point(180,130)
+    $opathSyntax.Size = New-Object System.Drawing.Size(90,20)
+    $opathSyntax.Text = "OPATH Syntax"
+    $opathSyntax.add_Click({[system.Diagnostics.Process]::start("https://docs.microsoft.com/en-us/powershell/exchange/recipient-filters?view=exchange-ps#additional-opath-syntax-information")})
+    $queryInputForm.Controls.Add($opathSyntax)
+
+    $opathSyntax = New-Object System.Windows.Forms.LinkLabel
+    $opathSyntax.Location = New-Object System.Drawing.Point(270,130)
+    $opathSyntax.Size = New-Object System.Drawing.Size(100,20)
+    $opathSyntax.Text = "Validating Queries"
+    $opathSyntax.add_Click({[system.Diagnostics.Process]::start("https://docs.microsoft.com/en-us/microsoft-365/compliance/retention-settings?view=o365-worldwide#validating-advanced-queries")})
+    $queryInputForm.Controls.Add($opathSyntax)
 
     $queryInputForm.Topmost = $true
     $queryInputForm.AcceptButton = $validateButton
