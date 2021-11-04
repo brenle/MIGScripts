@@ -32,7 +32,7 @@ function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrat
                 return $policyGuid
             } elseif ($policy.substring(0,4) -eq "-mbx"){
                 $policyGuid = $policy.trim($policy.Substring(0,4))
-                $policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
+                #$policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
                 return $policyGuid   
             } else {
                 return
