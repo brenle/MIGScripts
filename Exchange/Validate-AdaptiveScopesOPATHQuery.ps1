@@ -224,11 +224,11 @@ if($adaptiveScopeName){
 
     $queryInputForm = New-Object System.Windows.Forms.Form
     $queryInputForm.Text = "Enter OPATH Query to Validate"
-    $queryInputForm.Size = New-Object System.Drawing.Size(400,190)
+    $queryInputForm.Size = New-Object System.Drawing.Size(415,190)
     $queryInputForm.StartPosition = "CenterScreen"
     
     $validateButton = New-Object System.Windows.Forms.Button
-    $validateButton.Location = New-Object System.Drawing.Point(200,90)
+    $validateButton.Location = New-Object System.Drawing.Point(225,90)
     $validateButton.Text = "Validate"
     $validateButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
     $validateButton.TabIndex = 3
@@ -237,7 +237,7 @@ if($adaptiveScopeName){
     $queryInputForm.Controls.Add($validateButton)
 
     $cancelButton = New-Object System.Windows.Forms.Button
-    $cancelButton.Location = New-Object System.Drawing.Point(280,90)
+    $cancelButton.Location = New-Object System.Drawing.Point(305,90)
     $cancelButton.Text = "Cancel"
     $cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
     $cancelButton.TabIndex = 4
@@ -247,14 +247,14 @@ if($adaptiveScopeName){
 
     $instructionLabel = New-Object System.Windows.Forms.Label
     $instructionLabel.Location = New-Object System.Drawing.Point(20,20)
-    $instructionLabel.Size = New-Object System.Drawing.Size(350,40)
+    $instructionLabel.Size = New-Object System.Drawing.Size(360,40)
     $instructionLabel.Text = "Please enter the OPATH query EXACTLY as you would write it in the Advanced Query Builder:"
     
     $queryInputForm.Controls.Add($instructionLabel)
 
     $queryInputBox = New-Object System.Windows.Forms.TextBox
     $queryInputBox.Location = New-Object System.Drawing.Point(20,60)
-    $queryInputBox.Size = New-Object System.Drawing.Size(350,20)
+    $queryInputBox.Size = New-Object System.Drawing.Size(360,20)
     $queryInputBox.TabIndex = 1
 
     $queryInputForm.Controls.Add($queryInputBox)
@@ -287,16 +287,17 @@ if($adaptiveScopeName){
 
     $opathSyntax = New-Object System.Windows.Forms.LinkLabel
     $opathSyntax.Location = New-Object System.Drawing.Point(180,130)
-    $opathSyntax.Size = New-Object System.Drawing.Size(90,20)
+    $opathSyntax.Size = New-Object System.Drawing.Size(85,20)
     $opathSyntax.Text = "OPATH Syntax"
     $opathSyntax.add_Click({[system.Diagnostics.Process]::start("https://docs.microsoft.com/en-us/powershell/exchange/recipient-filters?view=exchange-ps#additional-opath-syntax-information")})
     $queryInputForm.Controls.Add($opathSyntax)
 
     $opathSyntax = New-Object System.Windows.Forms.LinkLabel
     $opathSyntax.Location = New-Object System.Drawing.Point(270,130)
-    $opathSyntax.Size = New-Object System.Drawing.Size(100,20)
+    $opathSyntax.Size = New-Object System.Drawing.Size(115,20)
     $opathSyntax.Text = "Validating Queries"
-    $opathSyntax.add_Click({[system.Diagnostics.Process]::start("https://docs.microsoft.com/en-us/microsoft-365/compliance/retention-settings?view=o365-worldwide#validating-advanced-queries")})
+    $opathSyntax.Text = "How to use this script"
+    $opathSyntax.add_Click({[system.Diagnostics.Process]::start("https://brenle.github.io/MIGScripts/exo/validate-adaptivescopesopathquery/")})
     $queryInputForm.Controls.Add($opathSyntax)
 
     $queryInputForm.Topmost = $true
