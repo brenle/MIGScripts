@@ -8,7 +8,8 @@ An assortment of scripts which I've created to help with Microsoft Information G
 - Use these scripts **at your own risk**. 
 - Ensure you review the entire script and understand **exactly what it does** before using.  
 - Test the scripts within a demo tenant or test environment **before** using in production.  
-- **Microsoft and I are not responsible for any result of using these scripts**.
+!!! warning
+    I am not responsible for any negative result from using these scripts.  It is your responsibility to fully review and understand what the script will do befor running in your environment.
 
 ## Running the scripts
 

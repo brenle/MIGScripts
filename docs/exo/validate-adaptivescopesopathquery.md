@@ -22,24 +22,25 @@ Connect-IPPSession
 
 ## Usage
 
-- To run the script and enter an OPATH query using a GUI:
+##### To run the script and enter an OPATH query using a GUI
 
 ``` powershell
 .\Validate-AdaptiveScopesOPATHQuery.ps1
 ```
 
-- To run the script and extract an OPATH query from an existing scope:
+##### To run the script and extract an OPATH query from an existing scope
 
 ``` powershell
 .\Validate-AdaptiveScopesOPATHQuery.ps1 -adaptiveScopeName [name of scope]
 ```
 
-- To run the script and supply a query via parameter:
+##### To run the script and supply a query via parameter
 
 ``` powershell
 .\Validate-AdaptiveScopesOPATHQuery.ps1 -rawQuery [OPATH query] -scopeType [User | Group]
 ```
-**NOTE:** You must include ```-scopeType``` when using ```-rawQuery```
+!!! note
+    You must include ```-scopeType``` when using ```-rawQuery```
 
 ### Optional parameters
 
