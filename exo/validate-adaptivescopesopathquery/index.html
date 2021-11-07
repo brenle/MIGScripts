@@ -58,6 +58,12 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#to-run-the-script-and-enter-an-opath-query-using-a-gui">To run the script and enter an OPATH query using a GUI</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#to-run-the-script-and-extract-an-opath-query-from-an-existing-scope">To run the script and extract an OPATH query from an existing scope</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#to-run-the-script-and-supply-a-query-via-parameter">To run the script and supply a query via parameter</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#optional-parameters">Optional parameters</a>
     </li>
         </ul>
@@ -108,46 +114,43 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="validate-adaptivescopesopathqueryps1">Validate-AdaptiveScopesOPATHQuery.ps1</h1>
+                <h1 id="validate-adaptivescopesopathqueryps1">Validate-AdaptiveScopesOPATHQuery.ps1<a class="headerlink" href="#validate-adaptivescopesopathqueryps1" title="Permanent link">⚓︎</a></h1>
 <p>This script can be used to validate advanced adaptive scopes queries written in OPATH.</p>
-<h2 id="requirements">Requirements</h2>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>Ensure you've read the <a href="https://brenle.github.io/MIGScripts/#disclaimer">disclaimer</a> and <a href="https://brenle.github.io/MIGScripts/#running-the-scripts">running the scripts</a> sections of this documentation.</li>
 <li>To run this script, you must have the <a href="https://docs.microsoft.com/en-us/powershell/exchange/exchange-online-powershell-v2?view=exchange-ps#install-and-maintain-the-exo-v2-module">Exchange Online PowerShell module</a> installed.</li>
 <li>You will be required to at least connect to Exchange Online, and will need permissions that allow you to run <code>Get-Mailbox</code> and <code>Get-Recipient</code>.</li>
 <li>To connect to Exchange Online using the Exchange Online PowerShell module, run:</li>
 </ul>
-<pre><code class="language-powershell">Connect-ExchangeOnline
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nb">Connect-ExchangeOnline</span>
+</code></pre></div>
 <ul>
 <li>If you use <code>-adaptiveScopeName</code> you will also need to connect to Security and Compliance Center PowerShell, and will need permissions that allow ou to run <code>Get-AdaptiveScope</code>.</li>
 <li>To connect to the Security and Compliance Center PowerShell module, run:</li>
 </ul>
-<pre><code class="language-powershell">Connect-IPPSession
-</code></pre>
-<h2 id="usage">Usage</h2>
-<ul>
-<li>To run the script and enter an OPATH query using a GUI:</li>
-</ul>
-<pre><code class="language-powershell">.\Validate-AdaptiveScopesOPATHQuery.ps1
-</code></pre>
-<ul>
-<li>To run the script and extract an OPATH query from an existing scope:</li>
-</ul>
-<pre><code class="language-powershell">.\Validate-AdaptiveScopesOPATHQuery.ps1 -adaptiveScopeName [name of scope]
-</code></pre>
-<ul>
-<li>To run the script and supply a query via parameter:</li>
-</ul>
-<pre><code class="language-powershell">.\Validate-AdaptiveScopesOPATHQuery.ps1 -rawQuery [OPATH query] -scopeType [User | Group]
-</code></pre>
-<p><strong>NOTE:</strong> You must include <code>-scopeType</code> when using <code>-rawQuery</code></p>
-<h3 id="optional-parameters">Optional parameters</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">Connect-IPPSession</span>
+</code></pre></div>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">⚓︎</a></h2>
+<h5 id="to-run-the-script-and-enter-an-opath-query-using-a-gui">To run the script and enter an OPATH query using a GUI<a class="headerlink" href="#to-run-the-script-and-enter-an-opath-query-using-a-gui" title="Permanent link">⚓︎</a></h5>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="n">Validate-AdaptiveScopesOPATHQuery</span><span class="p">.</span><span class="n">ps1</span>
+</code></pre></div>
+<h5 id="to-run-the-script-and-extract-an-opath-query-from-an-existing-scope">To run the script and extract an OPATH query from an existing scope<a class="headerlink" href="#to-run-the-script-and-extract-an-opath-query-from-an-existing-scope" title="Permanent link">⚓︎</a></h5>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="n">Validate-AdaptiveScopesOPATHQuery</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-adaptiveScopeName</span> <span class="no">[name of scope]</span>
+</code></pre></div>
+<h5 id="to-run-the-script-and-supply-a-query-via-parameter">To run the script and supply a query via parameter<a class="headerlink" href="#to-run-the-script-and-supply-a-query-via-parameter" title="Permanent link">⚓︎</a></h5>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="n">Validate-AdaptiveScopesOPATHQuery</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-rawQuery</span> <span class="no">[OPATH query]</span> <span class="n">-scopeType</span> <span class="p">[</span><span class="n">User</span> <span class="p">|</span> <span class="n">Group</span><span class="p">]</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You must include <code>-scopeType</code> when using <code>-rawQuery</code></p>
+</div>
+<h3 id="optional-parameters">Optional parameters<a class="headerlink" href="#optional-parameters" title="Permanent link">⚓︎</a></h3>
 <ul>
 <li><code>-exportCSV</code>: Exports full output of objects that match OPATH query to CSV file. No value is required with this parameter.</li>
 <li><code>-csvPath [path]</code>: Path to export Csv.  Default value is c:\temp\</li>
 </ul>
-<h2 id="download">Download</h2>
+<h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
 <p>Access the script <a href="https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1">here</a></p>
               
             </div>

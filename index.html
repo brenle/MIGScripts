@@ -98,28 +98,31 @@
           <div role="main">
             <div class="section">
               
-                <h1 id="welcome-to-migscripts">Welcome to MIGScripts</h1>
+                <h1 id="welcome-to-migscripts">Welcome to MIGScripts<a class="headerlink" href="#welcome-to-migscripts" title="Permanent link">⚓︎</a></h1>
 <p>An assortment of scripts which I've created to help with Microsoft Information Governance (MIG) and Records Management (RM) scenarios.</p>
-<h2 id="disclaimer">Disclaimer</h2>
+<h2 id="disclaimer">Disclaimer<a class="headerlink" href="#disclaimer" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>These scripts are provided as <em>working (usually) examples</em>, <strong>as-is, with no support</strong>.  However, if you do find an issue with any of theses scripts, feel free to <a href="https://github.com/brenle/MIGScripts/issues">submit an issue</a> or fork and submit a pull request with any updates.</li>
 <li>Use these scripts <strong>at your own risk</strong>. </li>
 <li>Ensure you review the entire script and understand <strong>exactly what it does</strong> before using.  </li>
 <li>Test the scripts within a demo tenant or test environment <strong>before</strong> using in production.  </li>
-<li><strong>Microsoft and I are not responsible for any result of using these scripts</strong>.</li>
 </ul>
-<h2 id="running-the-scripts">Running the scripts</h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>I am not responsible for any negative result from using these scripts.  It is your responsibility to fully review and understand what the script will do befor running in your environment.</p>
+</div>
+<h2 id="running-the-scripts">Running the scripts<a class="headerlink" href="#running-the-scripts" title="Permanent link">⚓︎</a></h2>
 <ul>
 <li>Given the scripts connect to resources in Microsoft 365, most of these scripts will require some prerequisite modules, such as the <a href="https://docs.microsoft.com/en-us/powershell/exchange/exchange-online-powershell-v2?view=exchange-ps#install-and-maintain-the-exo-v2-module">Exchange Online PowerShell module</a>.  I will note what is required and/or optional for each script.</li>
 <li>Since the scripts are meant to be simple examples and not production scripts, I do not sign my scripts.  In order to run these scripts, you will need to set the execution policy to unrestricted within PowerShell on your machine:</li>
 </ul>
-<pre><code class="language-powershell">Set-ExecutionPolicy Unrestricted
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nb">Set-ExecutionPolicy</span> <span class="n">Unrestricted</span>
+</code></pre></div>
 <ul>
 <li>Additionally, if you download any script from the internet and attempt to run it, you will first need to unblock the file first.</li>
 </ul>
-<pre><code class="language-powershell">Unblock-File &lt;filename&gt;
-</code></pre>
+<div class="highlight"><pre><span></span><code><span class="nb">Unblock-File</span> <span class="p">&lt;</span><span class="n">filename</span><span class="p">&gt;</span>
+</code></pre></div>
               
             </div>
           </div>
@@ -174,5 +177,5 @@
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-11-07 03:34:42.907826+00:00
+Build Date UTC : 2021-11-07 14:51:14.521793+00:00
 -->
