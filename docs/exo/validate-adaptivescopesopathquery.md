@@ -17,7 +17,7 @@ Connect-ExchangeOnline
 - To connect to the Security and Compliance Center PowerShell module, run:
 
 ``` powershell
-Connect-IPPSession
+Connect-IPPSSession
 ```
 
 ## Usage
@@ -50,3 +50,14 @@ Connect-IPPSession
 ## Download
 
 Access the script [here](https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1)
+
+## Changelog
+
+##### November 7th, 2021
+- Updated documentation link
+- Improved detection of inactive mailboxes
+- Added total number of inactive mailboxes in query because of improvements
+- Added detection of improperly licensed users (**Experimental!** *This may incorrectly report depending on the license or add-on*)
+
+##### November 4th, 2021
+- Initial release

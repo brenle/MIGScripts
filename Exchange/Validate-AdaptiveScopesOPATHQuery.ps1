@@ -115,7 +115,9 @@ function getCsvFilepath([string]$path){
 
 $rawQueryGetMailboxPassed = $false
 $rawQueryGetRecipientPassed = $false
-$inactiveMailboxesFound = $false
+#$inactiveMailboxesFound = $false
+$inactiveMailboxes = 0
+$wrongLicense = 0
 
 Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
 Write-host ""
@@ -390,26 +392,47 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     }
     Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
     Write-Host -ForegroundColor Green (determineElapsedTime $queryStart $queryStop)
+
     Write-host -ForegroundColor Cyan "- Query Matches Inactive Mailboxes: " -NoNewline
     foreach($mailbox in $mailboxes){
         ##TODO: add progress bar
         if($rawQueryGetMailboxPassed){
             if($mailbox.IsInactiveMailbox){
-                $inactiveMailboxesFound = $true
-                break
+                #$inactiveMailboxesFound = $true
+                $inactiveMailboxes++
             }
         } else {        
-            if((Get-mailbox -IncludeInactiveMailbox $mailbox.UserPrincipalName).IsInactiveMailbox){
-                $inactiveMailboxesFound = $true
-                break
+            if($mailbox.WhenSoftDeleted -ne $null){
+                #$inactiveMailboxesFound = $true
+                $inactiveMailboxes++
             }
         }
     }
 
-    if($inactiveMailboxesFound){
-        Write-host -ForegroundColor Yellow "YES"
+    if($inactiveMailboxes -gt 0){
+        Write-host -ForegroundColor Yellow "YES ($inactiveMailboxes)"
     } else {
         Write-host -ForegroundColor Yellow "NO"
+    }
+
+    Write-host -ForegroundColor Cyan "- Experimental - Query Matches Incorectly Licensed Users (E/A/G1 or E/A/G3): " -NoNewline
+    foreach($mailbox in $mailboxes){
+        ##TODO: add progress bar
+        if($rawQueryGetMailboxPassed){
+            if($mailbox.persistedCapabilities -notcontains "BPOS_S_InformationBarriers"){
+                $wrongLicense++
+            }
+        } else {        
+            if($mailbox.Capabilities -notcontains "BPOS_S_InformationBarriers"){
+                $wrongLicense++
+            }
+        }
+    }
+
+    if($wrongLicense -gt 0){
+        Write-host -ForegroundColor Yellow "YES ($wrongLicense)"
+    } else {
+        Write-host -ForegroundColor Green "NO"
     }
 
     ### Output Sample Data
