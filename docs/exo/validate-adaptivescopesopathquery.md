@@ -4,6 +4,7 @@ This script can be used to validate advanced adaptive scopes queries written in 
 
 ## Requirements
 
+- Ensure you've read the [disclaimer](https://brenle.github.io/MIGScripts/#disclaimer) and [running the scripts](https://brenle.github.io/MIGScripts/#running-the-scripts) sections of this documentation.
 - To run this script, you must have the [Exchange Online PowerShell module](https://docs.microsoft.com/en-us/powershell/exchange/exchange-online-powershell-v2?view=exchange-ps#install-and-maintain-the-exo-v2-module) installed.
 - You will be required to at least connect to Exchange Online, and will need permissions that allow you to run ```Get-Mailbox``` and ```Get-Recipient```.
 - To connect to Exchange Online using the Exchange Online PowerShell module, run:

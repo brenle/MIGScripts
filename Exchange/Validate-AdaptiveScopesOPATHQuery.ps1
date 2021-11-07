@@ -1,5 +1,6 @@
 # Written by Brendon Lee (brenle@microsoft.com)
 # Please note that this script is provided only as an example script and with no support.
+# Full documentation located at: https://brenle.github.io/MIGScripts/exo/validate-adaptivescopesopathquery/
 # ----------------------------------------------
 # NOTE: You must be connected to Exchange Online PowerShell with permissions to run Get-Mailbox as a minimum to run this script
 #
