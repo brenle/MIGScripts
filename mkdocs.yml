@@ -1,0 +1,10 @@
+site_name: MIGScripts
+nav:
+    - Home: index.md
+    - Exchange: 
+      - Validate-AdaptiveScopesOPATHQuery.ps1: exo/validate-adaptivescopesopathquery.md
+    #  - Get-MailboxRetentionInfo: get-mailboxretentioninfo.md
+    #  - Get-ELCLastSuccessTimestamp: get-elclastsuccesstimestamp.md
+    #- SharePoint/OneDrive:
+    #  - Adaptive Scopes Property Bag: adaptivescopes-propertybag.md
+theme: readthedocs
