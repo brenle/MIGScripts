@@ -70,6 +70,14 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#download">Download</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#november-7th-2021">November 7th, 2021</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#november-4th-2021">November 4th, 2021</a>
+    </li>
+        </ul>
+    </li>
     </ul>
                     </li>
                 </ul>
@@ -129,7 +137,7 @@
 <li>If you use <code>-adaptiveScopeName</code> you will also need to connect to Security and Compliance Center PowerShell, and will need permissions that allow ou to run <code>Get-AdaptiveScope</code>.</li>
 <li>To connect to the Security and Compliance Center PowerShell module, run:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="nb">Connect-IPPSession</span>
+<div class="highlight"><pre><span></span><code><span class="nb">Connect-IPPSSession</span>
 </code></pre></div>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">⚓︎</a></h2>
 <h5 id="to-run-the-script-and-enter-an-opath-query-using-a-gui">To run the script and enter an OPATH query using a GUI<a class="headerlink" href="#to-run-the-script-and-enter-an-opath-query-using-a-gui" title="Permanent link">⚓︎</a></h5>
@@ -152,6 +160,18 @@
 </ul>
 <h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
 <p>Access the script <a href="https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1">here</a></p>
+<h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">⚓︎</a></h2>
+<h5 id="november-7th-2021">November 7th, 2021<a class="headerlink" href="#november-7th-2021" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Updated documentation link</li>
+<li>Improved detection of inactive mailboxes</li>
+<li>Added total number of inactive mailboxes in query because of improvements</li>
+<li>Added detection of improperly licensed users (<strong>Experimental!</strong> <em>This may incorrectly report depending on the license or add-on</em>)</li>
+</ul>
+<h5 id="november-4th-2021">November 4th, 2021<a class="headerlink" href="#november-4th-2021" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Initial release</li>
+</ul>
               
             </div>
           </div>
