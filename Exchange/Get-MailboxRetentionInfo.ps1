@@ -351,11 +351,55 @@ if($targetMailbox.ComplianceTagHoldApplied){
 }
 invokeCmdlet $cmdLet
 
-### TODO: InplaceHolds
+### initialize dataset
+$ds = New-Object System.Data.DataSet
+
+### In-place holds
+Write-Host -BackgroundColor black -ForegroundColor gray "Current In-place Holds:"
+if(($targetMailbox.InPlaceHolds | Measure-Object).Count -gt 0){
+    $iphLog = New-Object System.Data.DataTable
+    $iphLog.TableName = "inplaceHolds"
+
+    $iphLog.Columns.Add("NameOrGuid") | Out-Null
+    $iphLog.Columns.Add("HoldType") | Out-Null
+    $iphLog.Columns.Add("PolicyAction") | Out-Null
+
+    foreach($inPlaceHold in $targetMailbox.InPlaceHolds){
+        $holdType = identifyPolicyOrHold $inPlaceHold $true $false
+        $holdGuid = identifyPolicyOrHold $inPlaceHold $false $false
+       
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $policySet = $eDiscoveryCases
+        } else {
+            $policySet = $retentionPolicies
+        }
+
+        $policy = identifyPolicyName $holdType $holdGuid $policySet
+
+        $iphRow = $iphLog.NewRow()
+        $iphRow.NameOrGuid = $policy   
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $iphRow.HoldType = coreOrAdvanced $policy $policySet
+        } else {
+            $iphRow.HoldType = $holdType
+        }
+        if($holdType -eq "Retention"){
+            $iphRow.PolicyAction = identifyRetentionPolicyAction $inPlaceHold
+        }
+
+        $iphLog.Rows.Add($iphRow)
+    }
+
+    $ds.Tables.Add($iphLog)
+    $ds.Tables["inplaceHolds"] | Format-Table
+
+} else {
+    ### TODO: Need to take into account org wide policies
+    write-Host "There are no in-place holds applied to this mailbox."
+}
 
 ### Get Mailbox Hold History ###
 $ht = Export-MailboxDiagnosticLogs $targetMailbox.UserPrincipalName -ComponentName HoldTracking
-$ds = New-Object System.Data.DataSet
 
 if($ht.MailboxLog.Length -gt 2){
     
