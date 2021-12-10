@@ -118,6 +118,14 @@ function coreOrAdvanced ($caseName, $policies){
     return $type
 }
 
+function invokeCmdlet ([string]$cmdLet){
+    try{
+        return Invoke-Expression $cmdLet -ErrorAction Stop
+    } catch {
+        return Write-Host "ERROR: $($error[0])" -ForegroundColor Red
+    }
+}
+
 #Declare variables
 $under10MB = $false
 $elcNeverRun = $false
@@ -309,22 +317,39 @@ if($ELCLastSuccess -eq $null){
 
 #Check Lithold/Duration
 Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine "Litigation Hold Enabled:"
-Write-Host " " $targetMailbox.LitigationHoldEnabled
+$cmdLet = "Write-Host ' ' $($targetMailbox.LitigationHoldEnabled)"
 if($targetMailbox.LitigationHoldEnabled){
-    Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine "- Litigation Hold Duration:"
-    Write-Host " " $targetMailbox.LitigationHoldDuration
+    $cmdLet += " -ForegroundColor Yellow"
+    $cmdLet += "; Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine '- Litigation Hold Duration:'"
+    $cmdLet += "; Write-Host ' ' $($targetMailbox.LitigationHoldDuration)"
 }
-# DelayHold / DelayReleaseHold
+invokeCmdlet $cmdLet
+
+# DelayHold
 Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine "Delay Hold Applied:"
-Write-Host " " $targetMailbox.DelayHoldApplied
+$cmdLet = "Write-Host ' ' $($targetMailbox.DelayHoldApplied)"
 if($targetMailbox.DelayHoldApplied){
-    Write-host -ForegroundColor Yellow ">> NOTE: The Delay Hold will expire after 30 days. Check the mailbox hold history below for an estimated date."
+    $cmdLet += " -ForegroundColor Yellow"
+    $cmdLet += "; Write-host -ForegroundColor Yellow '>> NOTE: The Delay Hold will expire after 30 days. Check the mailbox hold history below for an estimated date.'"
 }
+invokeCmdlet $cmdLet
+
+#DelayReleaseHold
 Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine "Delay Release Hold Applied:"
-Write-Host " " $targetMailbox.DelayReleaseHoldApplied
+$cmdLet = "Write-Host ' ' $($targetMailbox.DelayReleaseHoldApplied)"
 if($targetMailbox.DelayReleaseHoldApplied){
-    Write-host -ForegroundColor yellow ">> NOTE: The Delay Release Hold will expire after 30 days. Check the substrate hold history below for an estimated date."
+    $cmdLet += " -ForegroundColor Yellow"
+    $cmdLet += "; Write-host -ForegroundColor yellow {>> NOTE: The Delay Release Hold will expire after 30 days. Check the substrate hold history below for an estimated date.}"
 }
+invokeCmdlet $cmdLet
+
+#Check ComplianceTag
+Write-Host -BackgroundColor black -ForegroundColor gray -NoNewLine "Retention Label Hold Enabled:"
+$cmdLet = "Write-Host ' ' $($targetMailbox.ComplianceTagHoldApplied)"
+if($targetMailbox.ComplianceTagHoldApplied){
+    $cmdLet += " -ForegroundColor Yellow"
+}
+invokeCmdlet $cmdLet
 
 ### TODO: InplaceHolds
 
