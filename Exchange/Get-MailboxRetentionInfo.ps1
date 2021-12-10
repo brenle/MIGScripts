@@ -148,6 +148,7 @@ $gotLegalCases = $false
 $gotAeDLegalCases = $false
 $eDiscoveryCases = @()
 $retentionPolicies = @()
+$excludedPolicies = @()
 
 #enable debugging
 write-host $enableDebug
@@ -404,7 +405,11 @@ if(($targetMailbox.InPlaceHolds | Measure-Object).Count -gt 0){
             $iphRow.HoldType = $holdType
         }
         if($holdType -eq "Retention"){
-            $iphRow.PolicyAction = identifyRetentionPolicyAction $inPlaceHold
+            $action = identifyRetentionPolicyAction $inPlaceHold
+            $iphRow.PolicyAction = $action
+            if($action -eq "Excluded"){
+                $excludedPolicies += $holdGuid
+            }
         }
 
         $iphLog.Rows.Add($iphRow)
@@ -414,8 +419,57 @@ if(($targetMailbox.InPlaceHolds | Measure-Object).Count -gt 0){
     $ds.Tables["inplaceHolds"] | Format-Table
 
 } else {
-    ### TODO: Need to take into account org wide policies
     write-Host "There are no in-place holds applied to this mailbox."
+}
+
+### orgwide holds
+Write-Host -BackgroundColor black -ForegroundColor gray "Organization-wide Holds:"
+if(($orgConfig.InPlaceHolds | Measure-Object).Count -gt 0){
+    $owhLog = New-Object System.Data.DataTable
+    $owhLog.TableName = "orgwideHolds"
+
+    $owhLog.Columns.Add("NameOrGuid") | Out-Null
+    $owhLog.Columns.Add("HoldType") | Out-Null
+    $owhLog.Columns.Add("PolicyAction") | Out-Null
+    $owhLog.Columns.Add('AppliesToThisMailbox') | Out-Null
+
+    foreach($orgWideHold in $orgConfig.InPlaceHolds){
+        $holdType = identifyPolicyOrHold $orgWideHold $true $false
+        $holdGuid = identifyPolicyOrHold $orgWideHold $false $false
+       
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $policySet = $eDiscoveryCases
+        } else {
+            $policySet = $retentionPolicies
+        }
+
+        $policy = identifyPolicyName $holdType $holdGuid $policySet
+
+        $owhRow = $owhLog.NewRow()
+        $owhRow.NameOrGuid = $policy   
+        if(($holdType -eq "eDiscovery") -and ($gotLegalCases -eq $true)){
+            $owhRow.HoldType = coreOrAdvanced $policy $policySet
+        } else {
+            $owhRow.HoldType = $holdType
+        }
+        if($holdType -eq "Retention"){
+            $owhRow.PolicyAction = identifyRetentionPolicyAction $orgWideHold 
+            
+            if($excludedPolicies -contains $holdGuid){
+                $owhRow.AppliesToThisMailbox = $false
+            } else {
+                $owhRow.AppliesToThisMailbox = $true
+            }
+        }
+        
+        $owhLog.Rows.Add($owhRow)
+    }
+
+    $ds.Tables.Add($owhLog)
+    $ds.Tables["orgwideHolds"] | Format-Table
+
+} else {
+    write-Host "There are no organization wide holds."
 }
 
 ### Get Mailbox Hold History ###
