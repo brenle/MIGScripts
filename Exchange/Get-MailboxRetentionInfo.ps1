@@ -1,5 +1,6 @@
 param (
-    [Parameter(Mandatory = $true)][string]$mailboxIdentity
+    [Parameter(Mandatory = $true)][string]$mailboxIdentity,
+    [switch]$enableDebug
 )
 
 function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrate)
@@ -138,6 +139,15 @@ $gotLegalCases = $false
 $gotAeDLegalCases = $false
 $eDiscoveryCases = @()
 $retentionPolicies = @()
+
+#enable debugging
+write-host $enableDebug
+if($enableDebug){
+    $debugPref = $DebugPreference
+    $DebugPreference = "Continue"
+    Write-Debug "Current DebugPreference: $debugPref"
+    Write-Debug "Debug enabled"
+}
 
 #### Verify connectivity
 Write-Host -ForegroundColor gray -BackgroundColor black "Connectivity:"
@@ -523,4 +533,12 @@ if($hts.MailboxLog.Length -gt 2){
     if($elcNeverRun){
         Write-Host -ForegroundColor Yellow ">> NOTE: This is probably because MFA has never run."
     }
+}
+
+#revert debugging preference if changed
+if($enableDebug)
+{
+    Write-Debug "DebugPreference set back to $DebugPreference"
+    $DebugPreference = $debugPref
+    
 }
