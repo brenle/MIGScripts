@@ -90,12 +90,13 @@ function identifyRetentionPolicyAction ([string]$policy)
 function identifyPolicyName ($type, $policyGuid, $policies)
 {
     if($type -eq "Retention"){
+
         $policyName = ($policies | ?{$_.Guid -eq $policyGuid}).Name
         if($policyName -ne $null){
             #policy found
             return $policyName
         } else {
-            #policy not found (probably permissions)
+            #policy not found - possibly permissions
             return $policyGuid
         }
     } elseif($type -eq "eDiscovery"){
@@ -182,7 +183,7 @@ try{
     Write-host -ForegroundColor Green "OK"
 } catch {
     write-Host -ForegroundColor Red "ERROR"
-    write-host -ForegroundColor Red "Mailbox does not exist or you do not have proper permissions."
+    write-host -ForegroundColor Red $error[0]
     exit
 }
 
@@ -194,7 +195,7 @@ Try{
     $gotOrgConfig = $true
 } catch {
     write-Host -ForegroundColor Red "ERROR"
-    write-host -ForegroundColor Red "You may not have required permissions."
+    write-host -ForegroundColor Red $error[0]
     $gotOrgConfig = $false
     exit
 }
@@ -207,7 +208,7 @@ Try{
     $gotRetentionPolicies = $true
 } catch {
     write-Host -ForegroundColor Red "ERROR"
-    write-host -ForegroundColor Red "You may not have required permissions."
+    write-host -ForegroundColor Red $error[0]
     $gotRetentionPolicies = $false
     exit
 }
@@ -229,7 +230,7 @@ Try{
     $gotAppRetentionPolicies = $true
 } catch {
     write-Host -ForegroundColor Red "ERROR"
-    write-host -ForegroundColor Red "You may not have required permissions."
+    write-host -ForegroundColor Red $error[0]
     $gotAppRetentionPolicies = $false
     exit
 }
