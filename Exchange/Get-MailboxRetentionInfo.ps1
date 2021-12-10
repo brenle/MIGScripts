@@ -5,6 +5,12 @@ param (
 
 function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrate)
 {
+    Write-Debug "********"
+    Write-Debug "ENTER FUNCTION: identifyPolicyOrHold"
+    Write-Debug $policy
+    Write-Debug "TypeOnly=$typeOnly"
+    Write-Debug "Substrate=$substrate"
+
     if($policy.substring(0,4) -eq "UniH")
     {
         #eDiscovery Hold
@@ -12,7 +18,7 @@ function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrat
             return "eDiscovery"
         } else {
             if ($policy.substring(0,4) -eq "UniH"){
-                return $policy.trim($policy.Substring(0,4))
+                return $policy.trimstart($policy.Substring(0,4))
             } else {
                 return
             }
@@ -28,11 +34,14 @@ function identifyPolicyOrHold ([string]$policy, [bool]$typeOnly, [bool]$substrat
             return "Retention"
         } else {
             if(($policy.substring(0,3) -eq "mbx") -or ($policy.substring(0,3) -eq "skp") -or ($policy.substring(0,3) -eq "grp")){
-                $policyGuid = $policy.trim($policy.Substring(0,3))
-                $policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
+                $policyGuid = $policy.trimstart($policy.Substring(0,3))
+                Write-Debug "Remove Prefix Result: $policyGuid"
+                $policyGuid = $policyGuid.trimend($policyGuid.Substring($policyGuid.Length - 2))
+                Write-Debug "Remove Suffix Result: $policyGuid"
                 return $policyGuid
             } elseif ($policy.substring(0,4) -eq "-mbx"){
-                $policyGuid = $policy.trim($policy.Substring(0,4))
+                $policyGuid = $policy.trimstart($policy.Substring(0,4))
+                Write-Debug "Remove Prefix Result: $policyGuid"
                 #$policyGuid = $policyGuid.trim($policyGuid.Substring($policyGuid.Length - 2))
                 return $policyGuid   
             } else {
