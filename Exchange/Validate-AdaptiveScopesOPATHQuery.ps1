@@ -16,7 +16,7 @@
 #
 # To run the script and supply a query via parameter:
 #
-#     .\Validate-AdaptiveScopesOPATHQuery.ps1 -rawQuery [OPATH query] -scopeType [User | Group]
+#     .\Validate-AdaptiveScopesOPATHQuery.ps1 -rawQuery {[OPATH query]} -scopeType [User | Group]
 #
 #     NOTE: You must include -scopeType when using -rawQuery
 #
@@ -115,8 +115,10 @@ function getCsvFilepath([string]$path){
 
 $rawQueryGetMailboxPassed = $false
 $rawQueryGetRecipientPassed = $false
-#$inactiveMailboxesFound = $false
 $inactiveMailboxes = 0
+$sharedMailboxes = 0
+$resourceMailboxes = 0
+$userMailboxes = 0
 $wrongLicense = 0
 
 Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
@@ -350,7 +352,7 @@ Write-Host -ForegroundColor Cyan "- Validating RawQuery (Full)..." -NoNewLine
 try{
     $queryStart = Get-Date
     if($scopeType -eq "User"){
-        $mailboxes = Get-Mailbox -RecipientTypeDetails UserMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeInactiveMailbox -ErrorAction Stop
+        $mailboxes = Get-Mailbox -RecipientTypeDetails UserMailbox,SharedMailbox,RoomMailbox,EquipmentMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeInactiveMailbox -ErrorAction Stop
     } else {
         #must be group
         $mailboxes = Get-Mailbox -GroupMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeInactiveMailbox -ErrorAction Stop
@@ -365,7 +367,7 @@ if($rawQueryGetMailboxPassed -eq $false){
     try{
         $queryStart = Get-Date
         if($scopeType -eq "User"){
-            $mailboxes = Get-Recipient -RecipientTypeDetails UserMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeSoftDeletedRecipients -ErrorAction Stop
+            $mailboxes = Get-Recipient -RecipientTypeDetails UserMailbox,SharedMailbox,RoomMailbox,EquipmentMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeSoftDeletedRecipients -ErrorAction Stop
         } else {
             #must be group
             $mailboxes = Get-Recipient -RecipientTypeDetails GroupMailbox -Filter $queryToTest -ResultSize Unlimited -IncludeSoftDeletedRecipients -ErrorAction Stop
@@ -393,22 +395,59 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
     Write-Host -ForegroundColor Green (determineElapsedTime $queryStart $queryStop)
 
-    Write-host -ForegroundColor Cyan "- Query Matches Inactive Mailboxes: " -NoNewline
+    # 1/5/21 - adding support for detecting shared/resource mailboxes in addition to inactive mailboxes and collapsing license check
+    $i = 1
     foreach($mailbox in $mailboxes){
-        ##TODO: add progress bar
+        Write-Progress -Activity "Analyzing $($mailbox.Identity)..." -Status "Object $i of $matchingObjects" -PercentComplete (($i/$matchingObjects) * 100)
+
         if($rawQueryGetMailboxPassed){
             if($mailbox.IsInactiveMailbox){
-                #$inactiveMailboxesFound = $true
                 $inactiveMailboxes++
+            }
+            if($mailbox.persistedCapabilities -notcontains "BPOS_S_InformationBarriers"){
+                $wrongLicense++
             }
         } else {        
             if($mailbox.WhenSoftDeleted -ne $null){
-                #$inactiveMailboxesFound = $true
                 $inactiveMailboxes++
             }
+            if($mailbox.Capabilities -notcontains "BPOS_S_InformationBarriers"){
+                $wrongLicense++
+            }
         }
+        
+        Switch ($mailbox.RecipientTypeDetails)
+        {
+            "SharedMailbox" {$sharedMailboxes++}
+            "RoomMailbox" {$resourceMailboxes++}
+            "EquipmentMailbox" {$resourceMailboxes++}
+            "UserMailbox" {$userMailboxes++}
+        }
+        $i++
     }
 
+    Write-host -ForegroundColor Cyan "- Query Matches User Mailboxes: " -NoNewline
+    if($userMailboxes -gt 0){
+        Write-host -ForegroundColor Yellow "YES ($userMailboxes)"
+    } else {
+        Write-host -ForegroundColor Yellow "NO"
+    }
+
+    Write-host -ForegroundColor Cyan "- Query Matches Shared Mailboxes: " -NoNewline
+    if($sharedMailboxes -gt 0){
+        Write-host -ForegroundColor Yellow "YES ($sharedMailboxes)"
+    } else {
+        Write-host -ForegroundColor Yellow "NO"
+    }
+
+    Write-host -ForegroundColor Cyan "- Query Matches Resource Mailboxes: " -NoNewline
+    if($resourceMailboxes -gt 0){
+        Write-host -ForegroundColor Yellow "YES ($resourceMailboxes)"
+    } else {
+        Write-host -ForegroundColor Yellow "NO"
+    }
+
+    Write-host -ForegroundColor Cyan "- Query Matches Inactive Mailboxes: " -NoNewline
     if($inactiveMailboxes -gt 0){
         Write-host -ForegroundColor Yellow "YES ($inactiveMailboxes)"
     } else {
@@ -416,25 +455,12 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     }
 
     Write-host -ForegroundColor Cyan "- Experimental - Query Matches Incorectly Licensed Users (E/A/G1 or E/A/G3): " -NoNewline
-    foreach($mailbox in $mailboxes){
-        ##TODO: add progress bar
-        if($rawQueryGetMailboxPassed){
-            if($mailbox.persistedCapabilities -notcontains "BPOS_S_InformationBarriers"){
-                $wrongLicense++
-            }
-        } else {        
-            if($mailbox.Capabilities -notcontains "BPOS_S_InformationBarriers"){
-                $wrongLicense++
-            }
-        }
-    }
-
     if($wrongLicense -gt 0){
         Write-host -ForegroundColor Yellow "YES ($wrongLicense)"
     } else {
         Write-host -ForegroundColor Green "NO"
     }
-
+   
     ### Output Sample Data
     write-host -ForegroundColor Cyan "- Here is a sampling of the result (max 10):"
 
