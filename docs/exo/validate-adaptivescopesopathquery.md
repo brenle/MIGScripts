@@ -53,6 +53,10 @@ Access the script [here](https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815
 
 ## Changelog
 
+##### January 5th, 2022
+- Added support for SharedMailbox, EquipmentMailbox and RoomMailbox recipient types
+- Rewrote analysis to provide stats for number of shared/resource mailboxes in addition to inactive/incorrectly licensed
+
 ##### November 7th, 2021
 - Updated documentation link
 - Improved detection of inactive mailboxes
