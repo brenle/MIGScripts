@@ -63,11 +63,227 @@ function quickValidation($query){
         }
     }
 
-
+    #detect mixed properties
+    $getmailbox = @(
+        "AcceptMessagesOnlyFrom"
+        "AcceptMessagesOnlyFromDLMembers"
+        "AdministrativeUnits"
+        "AggregatedMailboxGuids"
+        "AggregatedMailboxGuidsRaw"
+        "AltSecurityIdentities"
+        "ArbitrationMailbox"
+        "ArchiveName"
+        "ArchiveQuota"
+        "ArchiveWarningQuota"
+        "AuditAdminFlags"
+        "AuditDelegateAdminFlags"
+        "AuditDelegateFlags"
+        "AuditEnabled"
+        "AuditLogAgeLimit"
+        "AuditOwnerFlags"
+        "BypassModerationFrom"
+        "BypassModerationFromDLMembers"
+        "CalendarLoggingQuota"
+        "CalendarRepairDisabled"
+        "Certificate"
+        "ComplianceTagHoldApplied"
+        "DataEncryptionPolicy"
+        "DefaultPublicFolderMailbox"
+        "DelayHoldApplied"
+        "DelayReleaseHoldApplied"
+        "DeletedItemFlags"
+        "DeliverToMailboxAndForward"
+        "DisabledArchiveDatabase"
+        "DisabledArchiveGuid"
+        "ElcExpirationSuspensionEndDate"
+        "ElcExpirationSuspensionStartDate"
+        "EnforcedTimestamps"
+        "ExchangeSecurityDescriptorRaw"
+        "ExchangeUserAccountControl"
+        "ExternalOofOptions"
+        "ForwardingAddress"
+        "ForwardingSmtpAddress"
+        "GeneratedOfflineAddressBooks"
+        "GenericForwardingAddress"
+        "GrantSendOnBehalfTo"
+        "ImmutableId"
+        "IncludeInGarbageCollection"
+        "InPlaceHolds"
+        "InPlaceHoldsRaw"
+        "IsExcludedFromServingHierarchy"
+        "IsHierarchyReady"
+        "IsHierarchySyncEnabled"
+        "IsInactiveMailbox"
+        "IsLinked"
+        "IsMachineToPersonTextMessagingEnabled"
+        "IsMailboxEnabled"
+        "IsMonitoringMailbox"
+        "IsPersonToPersonTextMessagingEnabled"
+        "IsResource"
+        "IsShared"
+        "IsSoftDeletedByDisable"
+        "IsSoftDeletedByRemove"
+        "IssueWarningQuota"
+        "JournalArchiveAddress"
+        "LanguagesRaw"
+        "LastExchangeChangedTime"
+        "LegacyExchangeDN"
+        "LitigationHoldDate"
+        "LitigationHoldOwner"
+        "MailboxContainerGuid"
+        "MailboxDatabasesRaw"
+        "MailboxGuidsRaw"
+        "MailboxLocationsRaw"
+        "MailboxPlan"
+        "MailTipTranslations"
+        "MaxBlockedSenders"
+        "MaxReceiveSize"
+        "MaxSafeSenders"
+        "MaxSendSize"
+        "MessageHygieneFlags"
+        "ModeratedBy"
+        "ModerationEnabled"
+        "ModerationFlags"
+        "NetID"
+        "NonCompliantDevices"
+        "OfflineAddressBook"
+        "OriginalNetID"
+        "PasswordLastSetRaw"
+        "PersistedCapabilities"
+        "PitrEnabled"
+        "PreviousDatabase"
+        "ProhibitSendQuota"
+        "ProhibitSendReceiveQuota"
+        "ProtocolSettings"
+        "QueryBaseDN"
+        "RawIssueWarningQuota"
+        "RawProhibitSendQuota"
+        "RawProhibitSendReceiveQuota"
+        "RawRecoverableItemsQuota"
+        "RawRecoverableItemsWarningQuota"
+        "RecipientLimits"
+        "RecipientSoftDeletedStatus"
+        "RecoverableItemsQuota"
+        "RecoverableItemsWarningQuota"
+        "RejectMessagesFrom"
+        "RejectMessagesFromDLMembers"
+        "RemoteAccountPolicy"
+        "RemotePowerShellEnabled"
+        "RequireAllSendersAreAuthenticated"
+        "ResourceCapacity"
+        "ResourceCustom"
+        "ResourcePropertiesDisplay"
+        "RetainDeletedItemsFor"
+        "RetentionComment"
+        "RetentionUrl"
+        "RoleAssignmentPolicy"
+        "RulesQuota"
+        "SCLDeleteThresholdInt"
+        "SCLJunkThresholdInt"
+        "SCLQuarantineThresholdInt"
+        "SCLRejectThresholdInt"
+        "SecurityProtocol"
+        "SharedEmailDomainStateLastModified"
+        "SharedEmailDomainTenant"
+        "SharedWithTargetSmtpAddress"
+        "SimpleDisplayName"
+        "SingleItemRecoveryEnabled"
+        "SMimeCertificate"
+        "SourceAnchor"
+        "StsRefreshTokensValidFrom"
+        "TextMessagingState"
+        "ThrottlingPolicy"
+        "ThumbnailPhoto"
+        "TransportSettingFlags"
+        "UCSImListMigrationCompleted"
+        "UMDtmfMap"
+        "UMSpokenName"
+        "UnifiedMailboxAccount"
+        "UseDatabaseQuotaDefaults"
+        "UsnCreated"
+        "WasInactiveMailbox"
+        "WindowsEmailAddress"
+    )
+    $getrecipient = @(
+        "ActiveSyncMailboxPolicy"
+        "BlockedSendersHash"
+        "C"
+        "City"
+        "Co"
+        "CoManagedBy"
+        "Company"
+        "CountryCode"
+        "CountryOrRegion"
+        "Department"
+        "DirSyncAuthorityMetadata"
+        "ExpansionServer"
+        "ExternalEmailAddress"
+        "FirstName"
+        "HasActiveSyncDevicePartnership"
+        "InformationBarrierSegments"
+        "LastName"
+        "ManagedBy"
+        "Manager"
+        "Members"
+        "MobileMailboxFlags"
+        "Notes"
+        "OwaMailboxPolicy"
+        "Phone"
+        "PostalCode"
+        "RawExternalEmailAddress"
+        "RawManagedBy"
+        "RecipientDisplayTypeRaw"
+        "SafeRecipientsHash"
+        "SafeSendersHash"
+        "ShadowC"
+        "ShadowCity"
+        "ShadowCo"
+        "ShadowCompany"
+        "ShadowCountryCode"
+        "ShadowDepartment"
+        "ShadowFirstName"
+        "ShadowLastName"
+        "ShadowManager"
+        "ShadowNotes"
+        "ShadowPhone"
+        "ShadowPostalCode"
+        "ShadowStateOrProvince"
+        "ShadowTitle"
+        "SidRaw"
+        "StateOrProvince"
+        "Title"
+        "UMMailboxPolicy"
+        "UMRecipientDialPlanId"
+        "WhenIBSegmentChanged"
+    )
+    $GetMailboxCmdlet = $false
+    $GetRecipientCmdlet = $false
+    #$mixedProperties = @()
+    foreach($cmdlet in $getmailbox){
+        if($query -match $cmdlet){
+            $GetMailboxCmdlet = $true
+        }
+    }
+    foreach($cmdlet in $getrecipient){
+        if($query -match $cmdlet){
+            $GetRecipientCmdlet = $true
+        }
+    }
+    if($GetMailboxCmdlet -and $GetRecipientCmdlet)
+    {
+        write-host -ForegroundColor Red "FAIL"
+        Write-Host -ForegroundColor Red ">> ERROR: Mixed query detected."
+        Write-host -ForegroundColor Red ">> Review: https://brenle.github.io/MIGScripts/exo/validate-adaptivescopesopathquery/#known-limitations"
+        exit
+    }
 }
 
-function determineElapsedTime($start, $end){
+function determineElapsedTime($start,$end){
     $totalTime = $end - $start
+    return $totalTime
+}
+
+function formatElapsedTime($totalTime){
     if($totalTime.Hours -ne 0){
         return "$($totalTime.hours):$($totalTime.minutes):$($totalTime.seconds)"
     } elseif ($totalTime.minutes -ne 0){
@@ -79,7 +295,7 @@ function determineElapsedTime($start, $end){
     }
 }
 
-function getCsvFilepath([string]$path){
+function getCsvFilepath([string]$path,[bool]$cloud){
     
     # path should end with \
     if (!$path.EndsWith("\"))
@@ -94,7 +310,11 @@ function getCsvFilepath([string]$path){
     }
     
     # generate file name
-    $filename = "OPATHQueryResults-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
+    if($cloud){
+        $filename = "OPATHQueryResults-Cloud-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
+    } else {
+        $filename = "OPATHQueryResults-OnPrem-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
+    }
 
     # verify folder exists, if not try to create it
     if (!(Test-Path($path)))
@@ -115,6 +335,7 @@ function getCsvFilepath([string]$path){
 
 $rawQueryGetMailboxPassed = $false
 $rawQueryGetRecipientPassed = $false
+$rawQueryGetOnPremObjectsPassed = $false
 $inactiveMailboxes = 0
 $sharedMailboxes = 0
 $resourceMailboxes = 0
@@ -124,7 +345,7 @@ $wrongLicense = 0
 Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
 Write-host ""
 #verify EXO connectivity
-write-Host -ForegroundColor Cyan ".:| Verifying Required Connectivity |:."
+write-Host -BackgroundColor White -ForegroundColor Black ".:| Verifying Required Connectivity |:."
 Write-Host ""
 
 Write-Host -ForegroundColor Cyan "- Exchange Online PowerShell: " -NoNewLine
@@ -160,7 +381,7 @@ if($adaptiveScopeName){
     }
 
     Write-host ""
-    Write-Host -ForegroundColor Cyan ".:| Validating OPATH Query using Adaptive Scope |:."
+    Write-Host -BackgroundColor White -ForegroundColor Black ".:| Validating OPATH Query using Adaptive Scope |:."
     Write-host ""
     
     try {
@@ -214,13 +435,13 @@ if($adaptiveScopeName){
         exit
     }
     Write-host ""
-    Write-Host -ForegroundColor Cyan ".:| Validating Raw OPATH Query |:."
+    Write-Host -BackgroundColor White -ForegroundColor Black ".:| Validating Raw OPATH Query |:."
     Write-host ""
 
     $queryToTest = $rawQuery
 } else {
     Write-host ""
-    Write-Host -ForegroundColor Cyan ".:| Validating OPATH Query - Enter a OPATH Query |:."
+    Write-Host -BackgroundColor White -ForegroundColor Black ".:| Validating OPATH Query - Enter a OPATH Query |:."
     Write-host ""
 
     Add-Type -AssemblyName System.Windows.Forms
@@ -379,107 +600,202 @@ if($rawQueryGetMailboxPassed -eq $false){
     }
 }
 
+
 if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
+    
+    # 1/11/22 - adding support for onprem mailboxes (mailusers)
+    if($scopeType -eq "User"){
+        try{
+            $onpremQueryStart = Get-Date
+            $onPremMailboxes = Get-MailUser -Filter $queryToTest -ResultSize Unlimited -ErrorAction Stop
+            $rawQueryGetOnPremObjectsPassed = $true
+            $onpremQueryStop = Get-Date
+        } catch {
+            try{
+                $onpremQueryStart = Get-Date
+                $onPremMailboxes = Get-Recipient -RecipientTypeDetails MailUser -Filter $queryToTest -ResultSize Unlimited -ErrorAction Stop
+                $rawQueryGetOnPremObjectsPassed = $true
+                $onpremQueryStop = Get-Date
+            } catch {
+                #query didn't work for MailUser objects
+                $rawQueryGetOnPremObjectsPassed = $false
+            }
+        }
+    }
+    
     Write-host -ForegroundColor Green "PASSED"
     
     $matchingObjects = ($mailboxes | Measure-Object).Count
-    Write-host -ForegroundColor Cyan "- Objects matching query: " -NoNewLine
+    Write-host -ForegroundColor Cyan "- Cloud objects matching query: " -NoNewLine
     
     if($matchingObjects -eq 0){
         Write-host -ForegroundColor Yellow $matchingObjects
-        Write-Host -ForegroundColor Yellow ">> NOTE: The query was valid, but returned no results."
-        exit
+        Write-Host -ForegroundColor Yellow ">> NOTE: The query was valid, but returned no cloud results."
     } else {
         Write-Host -ForegroundColor Green $matchingObjects
     }
+
+    # 1/11/22 - adding support for onprem mailboxes (mailusers)
+    Write-Host -ForegroundColor Cyan "- On-premises objects matching query: " -NoNewline
+    if($rawQueryGetOnPremObjectsPassed){
+        $matchingOnPremObjects = ($onPremMailboxes | Measure-Object).Count
+        if($matchingOnPremObjects -eq 0){
+            Write-Host -ForegroundColor Yellow $matchingOnPremObjects
+            Write-Host -ForegroundColor Yellow ">> NOTE: The query was valid, but returned no on-prem results."
+        } else {
+            Write-Host -ForegroundColor Green $matchingOnPremObjects
+        }
+    } else {
+        Write-Host -ForegroundColor Yellow "FAILED"
+        Write-Host -ForegroundColor Yellow ">> NOTE: The OPATH syntax was not compatible with Get-Recipient which is needed to look for MailUser objects.  This does not mean the query is invalid or will not identify on-prem objects."
+    }
+
+    if($matchingObjects -gt 0 -and $matchingOnPremObjects -gt 0){
+        Write-Host -ForegroundColor Cyan "- Total objects matching query: " -NoNewline
+        Write-host -ForegroundColor Green ($matchingObjects + $matchingOnPremObjects)
+    }
+    
+    # recalculate query time
+    if($rawQueryGetOnPremObjectsPassed)
+    {
+        $totalQueryTime = (determineElapsedTime $queryStart $queryStop) + (determineElapsedTime $onpremQueryStart $onpremQueryStop)
+    } else {
+        $totalQueryTime = (determineElapsedTime $queryStart $queryStop)
+    }
+
     Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
-    Write-Host -ForegroundColor Green (determineElapsedTime $queryStart $queryStop)
+    Write-Host -ForegroundColor Green (formatElapsedTime $totalQueryTime)
 
-    # 1/5/21 - adding support for detecting shared/resource mailboxes in addition to inactive mailboxes and collapsing license check
-    $i = 1
-    foreach($mailbox in $mailboxes){
-        Write-Progress -Activity "Analyzing $($mailbox.Identity)..." -Status "Object $i of $matchingObjects" -PercentComplete (($i/$matchingObjects) * 100)
+    #no need to go further if no results
+    if($matchingObjects -eq 0 -and $matchingOnPremObjects -eq 0){
+        exit
+    }
 
-        if($rawQueryGetMailboxPassed){
-            if($mailbox.IsInactiveMailbox){
-                $inactiveMailboxes++
+    # 1/11/22 - don't run if there are no resources
+    if($matchingObjects -gt 0){
+        Write-host ""
+        Write-Host -BackgroundColor White -ForegroundColor Black ".:| Checking cloud object properties |:."
+        Write-host ""
+        # 1/5/22 - adding support for detecting shared/resource mailboxes in addition to inactive mailboxes and collapsing license check
+        $i = 1
+        foreach($mailbox in $mailboxes){
+            Write-Progress -Activity "Analyzing $($mailbox.Identity)..." -Status "Object $i of $matchingObjects" -PercentComplete (($i/$matchingObjects) * 100)
+
+            if($rawQueryGetMailboxPassed){
+                if($mailbox.IsInactiveMailbox){
+                    $inactiveMailboxes++
+                }
+                if($mailbox.persistedCapabilities -notcontains "BPOS_S_InformationBarriers"){
+                    $wrongLicense++
+                }
+            } else {        
+                if($mailbox.WhenSoftDeleted -ne $null){
+                    $inactiveMailboxes++
+                }
+                if($mailbox.Capabilities -notcontains "BPOS_S_InformationBarriers"){
+                    $wrongLicense++
+                }
             }
-            if($mailbox.persistedCapabilities -notcontains "BPOS_S_InformationBarriers"){
-                $wrongLicense++
+            
+            Switch ($mailbox.RecipientTypeDetails)
+            {
+                "SharedMailbox" {$sharedMailboxes++}
+                "RoomMailbox" {$resourceMailboxes++}
+                "EquipmentMailbox" {$resourceMailboxes++}
+                "UserMailbox" {$userMailboxes++}
             }
-        } else {        
-            if($mailbox.WhenSoftDeleted -ne $null){
-                $inactiveMailboxes++
-            }
-            if($mailbox.Capabilities -notcontains "BPOS_S_InformationBarriers"){
-                $wrongLicense++
-            }
+            $i++
         }
-        
-        Switch ($mailbox.RecipientTypeDetails)
-        {
-            "SharedMailbox" {$sharedMailboxes++}
-            "RoomMailbox" {$resourceMailboxes++}
-            "EquipmentMailbox" {$resourceMailboxes++}
-            "UserMailbox" {$userMailboxes++}
+
+        Write-host -ForegroundColor Cyan "- Query Matches Cloud User Mailboxes: " -NoNewline
+        if($userMailboxes -gt 0){
+            Write-host -ForegroundColor Yellow "YES ($userMailboxes)"
+        } else {
+            Write-host -ForegroundColor Yellow "NO"
         }
-        $i++
-    }
 
-    Write-host -ForegroundColor Cyan "- Query Matches User Mailboxes: " -NoNewline
-    if($userMailboxes -gt 0){
-        Write-host -ForegroundColor Yellow "YES ($userMailboxes)"
-    } else {
-        Write-host -ForegroundColor Yellow "NO"
-    }
+        Write-host -ForegroundColor Cyan "- Query Matches Cloud Shared Mailboxes: " -NoNewline
+        if($sharedMailboxes -gt 0){
+            Write-host -ForegroundColor Yellow "YES ($sharedMailboxes)"
+            Write-host -ForegroundColor Magenta ">> TIP: Use 'IsShared' to include/exclude."
+        } else {
+            Write-host -ForegroundColor Yellow "NO"
+        }
 
-    Write-host -ForegroundColor Cyan "- Query Matches Shared Mailboxes: " -NoNewline
-    if($sharedMailboxes -gt 0){
-        Write-host -ForegroundColor Yellow "YES ($sharedMailboxes)"
-    } else {
-        Write-host -ForegroundColor Yellow "NO"
-    }
+        Write-host -ForegroundColor Cyan "- Query Matches Cloud Resource Mailboxes: " -NoNewline
+        if($resourceMailboxes -gt 0){
+            Write-host -ForegroundColor Yellow "YES ($resourceMailboxes)"
+            Write-host -ForegroundColor Magenta ">> TIP: Use 'IsResource' to include/exclude."
+        } else {
+            Write-host -ForegroundColor Yellow "NO"
+        }
 
-    Write-host -ForegroundColor Cyan "- Query Matches Resource Mailboxes: " -NoNewline
-    if($resourceMailboxes -gt 0){
-        Write-host -ForegroundColor Yellow "YES ($resourceMailboxes)"
-    } else {
-        Write-host -ForegroundColor Yellow "NO"
-    }
+        Write-host -ForegroundColor Cyan "- Query Matches Cloud Inactive Mailboxes: " -NoNewline
+        if($inactiveMailboxes -gt 0){
+            Write-host -ForegroundColor Yellow "YES ($inactiveMailboxes)"
+            Write-host -ForegroundColor Magenta ">> TIP: Use 'IsInactive' to include/exclude."
+        } else {
+            Write-host -ForegroundColor Yellow "NO"
+        }
+        if(!$rawQueryGetMailboxPassed){
+            Write-Host -ForegroundColor Yellow ">> WARNING: Get-Recipient was used to verify the query."
+            Write-Host -ForeGroundColor Yellow ">> Get-Recipient can only identify recent inactive mailboxes so this may be inaccurate."
+        }
 
-    Write-host -ForegroundColor Cyan "- Query Matches Inactive Mailboxes: " -NoNewline
-    if($inactiveMailboxes -gt 0){
-        Write-host -ForegroundColor Yellow "YES ($inactiveMailboxes)"
-    } else {
-        Write-host -ForegroundColor Yellow "NO"
-    }
-
-    Write-host -ForegroundColor Cyan "- Experimental - Query Matches Incorectly Licensed Users (E/A/G1 or E/A/G3): " -NoNewline
-    if($wrongLicense -gt 0){
-        Write-host -ForegroundColor Yellow "YES ($wrongLicense)"
-    } else {
-        Write-host -ForegroundColor Green "NO"
+        Write-host -ForegroundColor Cyan "- Experimental - Query Matches Incorectly Licensed Users (E/A/G1 or E/A/G3): " -NoNewline
+        if($wrongLicense -gt 0){
+            Write-host -ForegroundColor Yellow "YES ($wrongLicense)"
+        } else {
+            Write-host -ForegroundColor Green "NO"
+        }
     }
    
-    ### Output Sample Data
-    write-host -ForegroundColor Cyan "- Here is a sampling of the result (max 10):"
+    Write-host ""
+    Write-Host -BackgroundColor White -ForegroundColor Black ".:| Output |:."
+    Write-host ""
 
-    $mailboxes | Select-Object -First 10 | ft -a DisplayName, Alias, Identity, PrimarySmtpAddress
+    ### Output Sample Data  
+    if($matchingObjects -gt 0){
+        write-host -ForegroundColor Cyan "- Here is a sampling of the cloud-based results (max 10):"
+        $mailboxes | Select-Object -First 10 | ft -a DisplayName, Alias, Identity, PrimarySmtpAddress
+    }
+    if($matchingOnPremObjects -gt 0){
+        write-host -ForegroundColor Cyan "- Here is a sampling of the on-prem results (max 10):"
+        $onPremMailboxes | Select-Object -First 10 | ft -a DisplayName, Alias, Identity, PrimarySmtpAddress
+    }
 
     if(!$exportCsv){
-        Write-Host -ForegroundColor Yellow "NOTE: Run the script with -ExportCSV if you want to export all results that matched the query."
+        Write-Host -ForegroundColor Yellow "NOTE: Run the script with -ExportCSV if you want to export all objects that matched the query."
     } else {
-        Write-host -ForegroundColor Cyan "Exporting full results to CSV..." -NoNewline
-        $csvFile = getCsvFilepath $csvPath
-        try{
-            $mailboxes | Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
-            Write-host -ForegroundColor Green "OK"
-            Write-host -ForegroundColor Cyan ">> File location: $csvFile"
-        } catch {
-            write-host -ForegroundColor Red "FAILED"
-            Write-host -ForegroundColor Red ">> ERROR: Unable to export to '$csvFile'"
-            Write-Host -ForegroundColor Red $error[0]
-            exit
+        if($matchingObjects -gt 0){
+            Write-host -ForegroundColor Cyan "Exporting all matching cloud objects to CSV..." -NoNewline
+            $csvFile = getCsvFilepath $csvPath $true
+            try{
+                $mailboxes | Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
+                Write-host -ForegroundColor Green "OK"
+                Write-host -ForegroundColor Cyan ">> File location: " -NoNewline
+                Write-Host -ForegroundColor Magenta $csvFile
+            } catch {
+                write-host -ForegroundColor Red "FAILED"
+                Write-host -ForegroundColor Red ">> ERROR: Unable to export to '$csvFile'"
+                Write-Host -ForegroundColor Red $error[0]
+                exit
+            }
+        }
+        if($matchingOnPremObjects -gt 0){
+            Write-host -ForegroundColor Cyan "Exporting all matching on-prem objects to CSV..." -NoNewline
+            $csvFile = getCsvFilepath $csvPath $false
+            try{
+                $onPremMailboxes| Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
+                Write-host -ForegroundColor Green "OK"
+                Write-host -ForegroundColor Cyan ">> File location: " -NoNewline
+                Write-Host -ForegroundColor Magenta $csvFile
+            } catch {
+                write-host -ForegroundColor Red "FAILED"
+                Write-host -ForegroundColor Red ">> ERROR: Unable to export to '$csvFile'"
+                Write-Host -ForegroundColor Red $error[0]
+                exit
+            }
         }
     }
 } else {
