@@ -68,6 +68,10 @@
     </li>
         </ul>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#known-limitations">Known Limitations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#screenshots">Screenshots</a>
+    </li>
     <li class="toctree-l2"><a class="reference internal" href="#download">Download</a>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
@@ -160,6 +164,22 @@
 <li><code>-exportCSV</code>: Exports full output of objects that match OPATH query to CSV file. No value is required with this parameter.</li>
 <li><code>-csvPath [path]</code>: Path to export Csv.  Default value is c:\temp\</li>
 </ul>
+<h2 id="known-limitations">Known Limitations<a class="headerlink" href="#known-limitations" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Some properties exist for <code>Get-Mailbox</code> and some for <code>Get-Recipient</code>.  The script attempts to see if the query works with <code>Get-Mailbox</code> first, then attempts to use <code>Get-Recipient</code>.  However, if properties are mixed (one that works only with <code>Get-Mailbox</code> and one that works only with <code>Get-Recipient</code>), the script will not be able to validate the query although mixing properties is supported with adaptive policy scopes.  Review which cmdlet each property works with <a href="https://aka.ms/opath-filter">here</a>.</li>
+</ul>
+<h2 id="screenshots">Screenshots<a class="headerlink" href="#screenshots" title="Permanent link">⚓︎</a></h2>
+<figure>
+    <img src="../img/validation-script-no-params.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 1: Executing Validate-AdaptiveScopesOPATHQuery.ps1 with no parameters.</figcaption>
+</figure>
+
+<p><br/></p>
+<figure>
+    <img src="../img/validation-script-result.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 2: Validate-AdaptiveScopesOPATHQuery.ps1 results.</figcaption>
+</figure>
+
 <h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
 <p>Access the script <a href="https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1">here</a></p>
 <h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">⚓︎</a></h2>
