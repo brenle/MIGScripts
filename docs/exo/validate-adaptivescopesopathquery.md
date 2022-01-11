@@ -47,6 +47,24 @@ Connect-IPPSSession
 - ```-exportCSV```: Exports full output of objects that match OPATH query to CSV file. No value is required with this parameter.
 - ```-csvPath [path]```: Path to export Csv.  Default value is c:\temp\
 
+## Known Limitations
+
+- Some properties exist for ```Get-Mailbox``` and some for ```Get-Recipient```.  The script attempts to see if the query works with ```Get-Mailbox``` first, then attempts to use ```Get-Recipient```.  However, if properties are mixed (one that works only with ```Get-Mailbox``` and one that works only with ```Get-Recipient```), the script will not be able to validate the query although mixing properties is supported with adaptive policy scopes.  Review which cmdlet each property works with [here](https://aka.ms/opath-filter).
+
+## Screenshots
+
+<figure>
+    <img src="../img/validation-script-no-params.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 1: Executing Validate-AdaptiveScopesOPATHQuery.ps1 with no parameters.</figcaption>
+</figure>
+
+<br/>
+
+<figure>
+    <img src="../img/validation-script-result.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 2: Validate-AdaptiveScopesOPATHQuery.ps1 results.</figcaption>
+</figure>
+
 ## Download
 
 Access the script [here](https://github.com/brenle/MIGScripts/blob/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1)
