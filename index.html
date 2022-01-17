@@ -61,6 +61,11 @@
                     <li class="toctree-l1"><a class="reference internal" href="exo/validate-adaptivescopesopathquery/">Validate-AdaptiveScopesOPATHQuery.ps1</a>
                     </li>
                 </ul>
+                <p class="caption"><span class="caption-text">SharePoint/OneDrive</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="spo-od/adaptive-scopes-propertybag-scripts/">Adaptive Scopes Property Bag Scripts</a>
+                    </li>
+                </ul>
                 <ul>
                     <li class="toctree-l1"><a class="" href="https://github.com/brenle/MIGScripts/issues">⚠️ Submit an issue</a>
                     </li>
@@ -109,20 +114,28 @@
 </ul>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>I am not responsible for any negative result from using these scripts.  It is your responsibility to fully review and understand what the script will do befor running in your environment.</p>
+<p>I am not responsible for any negative result from using these scripts.  It is your responsibility to fully review and understand what the script will do before running in your environment.</p>
 </div>
 <h2 id="running-the-scripts">Running the scripts<a class="headerlink" href="#running-the-scripts" title="Permanent link">⚓︎</a></h2>
 <ul>
-<li>Given the scripts connect to resources in Microsoft 365, most of these scripts will require some prerequisite modules, such as the <a href="https://docs.microsoft.com/en-us/powershell/exchange/exchange-online-powershell-v2?view=exchange-ps#install-and-maintain-the-exo-v2-module">Exchange Online PowerShell module</a>.  I will note what is required and/or optional for each script.</li>
-<li>Since the scripts are meant to be simple examples and not production scripts, I do not sign my scripts.  In order to run these scripts, you will need to set the execution policy to unrestricted within PowerShell on your machine:</li>
+<li>Given the scripts connect to resources in Microsoft 365, most of these scripts will require some prerequisite modules, such as:<ul>
+<li><a href="https://docs.microsoft.com/en-us/powershell/exchange/exchange-online-powershell-v2?view=exchange-ps#install-and-maintain-the-exo-v2-module">Exchange Online PowerShell module</a></li>
+<li><a href="https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online">SharePoint Online PowerShell module</a></li>
+<li><a href="https://pnp.github.io/powershell/articles/installation.html">PnP PowerShell module</a></li>
 </ul>
+</li>
+<li>I will note what is required and/or optional for each script.</li>
+<li>
+<p>Since the scripts are meant to be simple examples and not production scripts, I do not sign my scripts.  In order to run these scripts, you will need to set the execution policy to unrestricted within PowerShell on your machine:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Set-ExecutionPolicy</span> <span class="n">Unrestricted</span>
 </code></pre></div>
-<ul>
-<li>Additionally, if you download any script from the internet and attempt to run it, you will first need to unblock the file first.</li>
-</ul>
+</li>
+<li>
+<p>Additionally, if you download any script from the internet and attempt to run it, you will first need to unblock the file first.</p>
 <div class="highlight"><pre><span></span><code><span class="nb">Unblock-File</span> <span class="p">&lt;</span><span class="n">filename</span><span class="p">&gt;</span>
 </code></pre></div>
+</li>
+</ul>
               
             </div>
           </div>
@@ -177,5 +190,5 @@
 
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2022-01-12 03:19:18.912564+00:00
+Build Date UTC : 2022-01-17 18:08:04.976023+00:00
 -->

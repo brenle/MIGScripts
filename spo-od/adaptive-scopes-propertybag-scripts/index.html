@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+  <title>Adaptive Scopes Property Bag Scripts - MIGScripts</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+
+  <link rel="stylesheet" href="../../css/theme.css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Adaptive Scopes Property Bag Scripts";
+    var mkdocs_page_input_path = "spo-od\\adaptive-scopes-propertybag-scripts.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> MIGScripts</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">Exchange</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="../../exo/validate-adaptivescopesopathquery/">Validate-AdaptiveScopesOPATHQuery.ps1</a>
+                    </li>
+                </ul>
+                <p class="caption"><span class="caption-text">SharePoint/OneDrive</span></p>
+                <ul class="current">
+                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Adaptive Scopes Property Bag Scripts</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-export-the-existing-sites">Step 1: Export the existing sites</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-add-a-property-bag-value-for-each-site-in-the-csv-file">Step 2: Add a property bag value for each site in the CSV file</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-update-the-property-bag-for-each-site">Step 3: Update the property bag for each site</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#optional-parameters">Optional parameters</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#export-spositesps1">Export-SPOSites.ps1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#the-following-parameters-are-optional-but-cannot-be-combined-with-each-other">The following parameters are optional but cannot be combined with each other</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#update-bulkpropertybagvaluesps1">Update-BulkPropertyBagValues.ps1</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#download">Download</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#export-spositesps1_1">Export-SPOSites.ps1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#october-27-2021-0586751">October 27, 2021 (0586751)</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#update-bulkpropertybagvaluesps1_1">Update-BulkPropertyBagValues.ps1</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#january-14-2022-8394ccd">January 14, 2022 (8394ccd)</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#october-27-2021-0586751_1">October 27, 2021 (0586751)</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                    </li>
+                </ul>
+                <ul>
+                    <li class="toctree-l1"><a class="" href="https://github.com/brenle/MIGScripts/issues">⚠️ Submit an issue</a>
+                    </li>
+                </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">MIGScripts</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>SharePoint/OneDrive &raquo;</li>
+        
+      
+    
+    <li>Adaptive Scopes Property Bag Scripts</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  
+  <hr/>
+</div>
+
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="adaptive-scopes-property-bag-scripts">Adaptive Scopes Property Bag Scripts<a class="headerlink" href="#adaptive-scopes-property-bag-scripts" title="Permanent link">⚓︎</a></h1>
+<p>These scripts are to be used as examples showing how you can use <a href="https://pnp.github.io/powershell/index.html">SharePoint Patterns &amp; Practices (PnP)</a> to add custom properties to a large number of existing sites in SharePoint Online.</p>
+<h2 id="requirements">Requirements<a class="headerlink" href="#requirements" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li>Ensure you've read the <a href="https://brenle.github.io/MIGScripts/#disclaimer">disclaimer</a> and <a href="https://brenle.github.io/MIGScripts/#running-the-scripts">running the scripts</a> sections of this documentation.</li>
+<li>For the <strong>first script</strong> (<a href="#download">Export-SPOSites.ps1</a>) you will be required to <a href="https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online">connect to SharePoint Online using the SharePoint Online PowerShell Module</a> and will need permissions that allow you to run <code>Get-SPOSite</code>:</li>
+<li>For the <strong>second script</strong> (<a href="#download">Add-BulkPropertyBagValues.ps1</a>) you will be required to use <a href="https://pnp.github.io/powershell/index.html">PnP.PowerShell module</a> and will need to be a site collection administrator for each site you want to add custom properties to.</li>
+<li>
+<p>If this is the first time you are using PnP PowerShell, you will need to first log in interactively and allow permissions:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Connect-PnPOnline</span> <span class="n">-Url</span> <span class="n">https</span><span class="p">://{</span><span class="n">tenantName</span><span class="p">}.</span><span class="n">sharepoint</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">sites</span><span class="p">/{</span><span class="n">sitename</span><span class="p">}</span> <span class="n">-Interactive</span>
+</code></pre></div>
+</li>
+</ul>
+<figure>
+    <img src="../img/pnp-aad-permissions.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 1: When first using PnP PowerShell you must accept the AAD permissions by logging in with the -Interactive switch.</figcaption>
+</figure>
+
+<p><br/></p>
+<ul>
+<li>
+<p>Since the purpose of these scripts are to update many existing SharePoint Online sites, you must save your credentials (at least temporarily) in the credential manager.  Follow <a href="https://pnp.github.io/powershell/articles/authentication.html#authenticating-with-pre-stored-credentials-using-the-windows-credential-manager-windows-only">these instructions</a> to do so.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method only works with Windows.  There are other methods available, but you will need to update the scripts to use them.</p>
+</div>
+</li>
+<li>
+<p>Some <a href="#optional-parameters">optional parameters</a> may require connectivity to the <a href="https://docs.microsoft.com/en-us/powershell/exchange/connect-to-exchange-online-powershell?view=exchange-ps">Exchange Online PowerShell module</a> and will require permissions to run <code>Get-UnifiedGroup</code>.</p>
+</li>
+</ul>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">⚓︎</a></h2>
+<h3 id="step-1-export-the-existing-sites">Step 1: Export the existing sites<a class="headerlink" href="#step-1-export-the-existing-sites" title="Permanent link">⚓︎</a></h3>
+<ol>
+<li>
+<p>Log in to SharePoint Online PowerShell</p>
+<div class="highlight"><pre><span></span><code><span class="nb">Connect-SPOService</span> <span class="n">-Url</span> <span class="n">https</span><span class="p">://{</span><span class="n">tenantName</span><span class="p">}</span><span class="n">-admin</span><span class="p">.</span><span class="n">sharepoint</span><span class="p">.</span><span class="n">com</span>
+</code></pre></div>
+</li>
+<li>
+<p>Use <a href="#download">Export-SPOSites.ps1</a> to export all SPO sites to a CSV file.  Use <code>-customKeyToAdd</code> to provide the name of the custom property you will be adding to all sites.</p>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="nb">Export-SPOSites</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-customKeyToAdd</span> <span class="n">customKeyName</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Replace <code>customKeyName</code> with whatever custom key name you want to use, such as <code>customDepartment</code> or <code>customProjectName</code>.</p>
+</div>
+</li>
+<li>
+<p>All sites that the script exports will be stored in a CSV file. The location will be output once the script is completed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The default location and name of the CSV file will be <code>c:\temp\SPOSitesExport.csv</code>.  You can use <a href="#optional-parameters">optional parameters</a> to change the default location and name.</p>
+</div>
+</li>
+</ol>
+<figure>
+    <img src="../img/step1.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 2: Using Export-SPOSites.</figcaption>
+</figure>
+
+<p><br/></p>
+<h3 id="step-2-add-a-property-bag-value-for-each-site-in-the-csv-file">Step 2: Add a property bag value for each site in the CSV file<a class="headerlink" href="#step-2-add-a-property-bag-value-for-each-site-in-the-csv-file" title="Permanent link">⚓︎</a></h3>
+<ol>
+<li>
+<p>Open the CSV file that was created.</p>
+</li>
+<li>
+<p>A column for the custom property you specified with the <code>-customKeyToAdd</code> switch has been added.</p>
+</li>
+<li>
+<p>Add a value in this column for each site that you want to add the custom property to, then save the CSV file.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Any site that you add a value for will be processed.  Any site that you do not add a value for will be skipped.  In this example, 4 sites have values set so only 4 sites will be updated.</p>
+</div>
+</li>
+</ol>
+<figure>
+    <img src="../img/step2.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 3: Specifying the custom property values.</figcaption>
+</figure>
+
+<p><br/></p>
+<h3 id="step-3-update-the-property-bag-for-each-site">Step 3: Update the property bag for each site<a class="headerlink" href="#step-3-update-the-property-bag-for-each-site" title="Permanent link">⚓︎</a></h3>
+<ol>
+<li>
+<p>Execute <a href="#download">Add-BulkPropertyBagValues.ps1</a> using <code>-customKeyToAdd</code> to specify the name of the custom property added in the previous steps, <code>-csvFile</code> to provide the path to the CSV file updated in the previous steps, and <code>-storedCredential</code> to provide the <a href="https://pnp.github.io/powershell/articles/authentication.html#authenticating-with-pre-stored-credentials-using-the-windows-credential-manager-windows-only">credential stored in the credential manager</a>.  This script will automatically connect to each site and add the new custom properties.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless <a href="#optional-parameters">optional parameters</a> are specified, the script will default to <strong>not</strong> overwriting custom property values if the properties already exist.</p>
+</div>
+<div class="highlight"><pre><span></span><code><span class="p">.\</span><span class="nb">Add-BulkPropertyBagValues</span><span class="p">.</span><span class="n">ps1</span> <span class="n">-customKeyToAdd</span> <span class="s2">&quot;customKeyName&quot;</span> <span class="n">-csvFile</span> <span class="n">c</span><span class="p">:\</span><span class="n">temp</span><span class="p">\</span><span class="n">SPOSitesExport</span><span class="p">.</span><span class="n">csv</span> <span class="n">-storedCredential</span> <span class="n">PropertyBagExample</span>
+</code></pre></div>
+</li>
+</ol>
+<figure>
+    <img src="../img/step3a.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 4: Add-BulkPropertyBagValues.ps1 will give a status bar as it is running giving an indication as to how many sites were completed, skipped, and failed.</figcaption>
+</figure>
+
+<p><br/></p>
+<figure>
+    <img src="../img/step3b.png"/> 
+    <figcaption style="font-style: italic; text-align:center;">Figure 5: Add-BulkPropertyBagValues.ps1 will give a status report after running indicating how many sites were completed, skipped, and failed.</figcaption>
+</figure>
+
+<p><br/></p>
+<h2 id="optional-parameters">Optional parameters<a class="headerlink" href="#optional-parameters" title="Permanent link">⚓︎</a></h2>
+<h3 id="export-spositesps1">Export-SPOSites.ps1<a class="headerlink" href="#export-spositesps1" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li><code>customValueToAdd</code>: You can alternatively have the script automatically populate custom values in the CSV. Keep in mind this will apply to ALL exported sites.</li>
+<li><code>csvExportPath</code>: Path to export CSV.  Default is c:\temp.</li>
+<li><code>csvExportFileName</code>: Name of CSV file.  Default is SPOSitesExport.csv.</li>
+<li><code>identifyTeamsConnectedGroups</code>: When enabled, will connect to EXO to identify which M365 groups are teams. Default is disabled (<code>$false</code>).  Enabling this parameter will require connection to <a href="https://docs.microsoft.com/en-us/powershell/exchange/connect-to-exchange-online-powershell?view=exchange-ps">Exchange Online PowerShell</a>.</li>
+<li><code>outputAllAvailableSPOSiteProperties</code>: when enabled, the script will not limit output columns. when disabled, only select columns are output. Default is disabled (<code>$false</code>).</li>
+</ul>
+<h4 id="the-following-parameters-are-optional-but-cannot-be-combined-with-each-other">The following parameters are optional but cannot be combined with each other<a class="headerlink" href="#the-following-parameters-are-optional-but-cannot-be-combined-with-each-other" title="Permanent link">⚓︎</a></h4>
+<ul>
+<li><code>TeamsConnectedGroupsOnly</code>: Outputs <strong>only</strong> M365 groups which are Teams connected. Enabling this parameter will require connection to <a href="https://docs.microsoft.com/en-us/powershell/exchange/connect-to-exchange-online-powershell?view=exchange-ps">Exchange Online PowerShell</a>. Default is disabled (<code>$false</code>).</li>
+<li><code>M365GroupsOnly</code>: Outputs <strong>only</strong> M365 groups. If <code>identifyTeamsConnectedGroups</code> is enabled, it will output non-Teams M365 groups.  Default is disabled (<code>$false</code>).</li>
+<li><code>SPOSitesOnly</code>:  Outputs <strong>only</strong> SPO Sites (non-Group connected). Default is disabled (<code>$false</code>).</li>
+</ul>
+<h3 id="update-bulkpropertybagvaluesps1">Update-BulkPropertyBagValues.ps1<a class="headerlink" href="#update-bulkpropertybagvaluesps1" title="Permanent link">⚓︎</a></h3>
+<ul>
+<li><code>overwrite</code>: If enabled, the script will overwrite any existing property bag values that match the custom property being added.  Default is disabled (<code>$false</code>).</li>
+</ul>
+<h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
+<ul>
+<li><a href="https://github.com/brenle/MIGScripts/blob/main/SPO-OD/AdaptiveScopes-PropertyBag/Export-SPOSites.ps1">Export-SPOSites.ps1</a></li>
+<li><a href="https://github.com/brenle/MIGScripts/blob/main/SPO-OD/AdaptiveScopes-PropertyBag/Add-BulkPropertyBagValues.ps1">Add-BulkPropertyBagValues.ps1</a></li>
+</ul>
+<h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">⚓︎</a></h2>
+<h3 id="export-spositesps1_1">Export-SPOSites.ps1<a class="headerlink" href="#export-spositesps1_1" title="Permanent link">⚓︎</a></h3>
+<h5 id="october-27-2021-0586751">October 27, 2021 <a href="https://github.com/brenle/MIGScripts/commit/0586751ae8d6cf9934388b7cb0b7b465a73aaec2#diff-ee6b6f5372a92328619ec9cda43aa93c9ba202773bdf0f6a65541d8829825ebe">(0586751)</a><a class="headerlink" href="#october-27-2021-0586751" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Initial release</li>
+</ul>
+<h3 id="update-bulkpropertybagvaluesps1_1">Update-BulkPropertyBagValues.ps1<a class="headerlink" href="#update-bulkpropertybagvaluesps1_1" title="Permanent link">⚓︎</a></h3>
+<h5 id="january-14-2022-8394ccd">January 14, 2022 <a href="https://github.com/brenle/MIGScripts/commit/8394ccdb2e001f9e14960c6ae1adbc0de23a655f">(8394ccd)</a><a class="headerlink" href="#january-14-2022-8394ccd" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Updated with new PnP cmdlet and module version check</li>
+</ul>
+<h5 id="october-27-2021-0586751_1">October 27, 2021 <a href="https://github.com/brenle/MIGScripts/commit/0586751ae8d6cf9934388b7cb0b7b465a73aaec2#diff-ee6b6f5372a92328619ec9cda43aa93c9ba202773bdf0f6a65541d8829825ebe">(0586751)</a><a class="headerlink" href="#october-27-2021-0586751_1" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Initial release</li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../../exo/validate-adaptivescopesopathquery/" class="btn btn-neutral" title="Validate-AdaptiveScopesOPATHQuery.ps1"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../exo/validate-adaptivescopesopathquery/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+  </span>
+</div>
+    <script>var base_url = '../..';</script>
+    <script src="../../js/theme_extra.js" defer></script>
+    <script src="../../js/theme.js" defer></script>
+      <script src="../../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
