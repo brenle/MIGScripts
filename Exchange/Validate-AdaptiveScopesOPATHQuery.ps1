@@ -30,7 +30,8 @@ param (
     [ValidateScript({-not ($adaptiveScopeName)})][string]$rawQuery,
     [string]$scopeType,
     [switch]$exportCsv = $false,
-    [string]$csvPath = "c:\temp\"
+    [string]$csvPath = "c:\temp\",
+    [switch]$skipQuickValidation = $false
 )
 
 function quickValidation($query){
@@ -565,8 +566,12 @@ Write-Host -ForegroundColor Cyan "- Scope Type: " -NoNewline
 WRite-host -ForegroundColor Gray $scopeType
 
 write-host -ForegroundColor Cyan "- Validating RawQuery (Quick)..." -NoNewline
-quickValidation $queryToTest
-Write-host -ForegroundColor Green "PASSED"
+if(!$skipQuickValidation){
+    quickValidation $queryToTest
+    Write-host -ForegroundColor Green "PASSED"
+} else {
+    Write-host -ForegroundColor Gray "SKIPPED"
+}
 
 Write-Host -ForegroundColor Cyan "- Validating RawQuery (Full)..." -NoNewLine
 
