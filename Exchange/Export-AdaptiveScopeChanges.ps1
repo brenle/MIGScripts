@@ -6,6 +6,7 @@ $allRecords = @()
 $sessionId = "$($AdaptiveScope.Guid)-$(Get-Random)"
 $allRecordsFetched = $false
 $csvFilePath = "c:\temp\"
+$supportedScopeTypes = @('User')
 
 function assembleArrayList($allRecords, $records){
     foreach ($record in $records){
@@ -14,10 +15,34 @@ function assembleArrayList($allRecords, $records){
     return $allRecords
 }
 
-### TODO: need to verify connectivity
+# Test connnectivity - EXO
+try{
+    $testCommand = Get-Command Get-OrganizationConfig -ErrorAction Stop | Out-Null
+} catch {
+    try{
+        $testCommand = Get-Command Connect-ExchangeOnline -ErrorAction Stop | Out-Null
+        Write-Host -ForegroundColor Red "You must be connected to Exchange Online PowerShell Module."
+    } catch {
+        Write-Host -ForegroundColor Red "You must have the Exchange Online PowerShell Module installed & connected."
+    }
+    exit
+}
+
+## Test connectivity - SCC
+try{
+    $testCommand = Get-Command Get-RetentionCompliancePolicy -ErrorAction Stop | Out-Null
+} catch {
+    Write-Host -ForegroundColor Red "You must be connected to SCC PowerShell Module."
+    exit
+}
 
 try{
     $adaptiveScope = Get-AdaptiveScope $AdaptiveScopeName
+    if(!($supportedScopeTypes -contains $adaptiveScope.LocationType)){
+        Write-host -ForegroundColor Red "Only the following scope types are currently supported:"
+        $supportedScopeTypes
+        exit
+    }
     $createdDate = $adaptiveScope.WhenCreatedUTC.Date
     $todayDate = (Get-Date).Date
     $csvFileName = "$($AdaptiveScope.Name)-LOG_$(Get-Date -Format "yyyyMMdd-HHmmss").csv"
@@ -33,7 +58,6 @@ try{
 }
 
 $a = 1
-
 do{
     Write-Host "Collecting any mactching records from $a-$($a + 99)..." -NoNewline
     $tempRecords = Search-UnifiedAuditLog -StartDate $createdDate -EndDate $todayDate -Operations ApplicableAdaptiveScopeChange -SessionId $sessionId -SessionCommand ReturnLargeSet
@@ -49,7 +73,9 @@ do{
 
 $totalRecords = ($allRecords | Measure-Object).count
 Write-Host "Gathered a total of $totalRecords records."
-### TODO: Need to sort records...After log?
+if($totalRecords -ge 50000){
+    Write-Host -ForegroundColor Yellow "WARNING: The maximum number of records has been exceeded.  The results may not be complete."
+}
 
 $ds = New-Object System.Data.DataSet
 
