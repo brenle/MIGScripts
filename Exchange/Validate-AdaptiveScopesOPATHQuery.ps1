@@ -31,7 +31,8 @@ param (
     [string]$scopeType,
     [switch]$exportCsv = $false,
     [string]$csvPath = "c:\temp\",
-    [switch]$skipQuickValidation = $false
+    [switch]$skipQuickValidation = $false,
+    [switch]$skipMixedPropertyDetection = $true
 )
 
 function quickValidation($query){
@@ -257,25 +258,28 @@ function quickValidation($query){
         "UMRecipientDialPlanId"
         "WhenIBSegmentChanged"
     )
-    $GetMailboxCmdlet = $false
-    $GetRecipientCmdlet = $false
-    #$mixedProperties = @()
-    foreach($cmdlet in $getmailbox){
-        if($query -match $cmdlet){
-            $GetMailboxCmdlet = $true
+    
+    if(!$skipMixedPropertyDetection){
+        $GetMailboxCmdlet = $false
+        $GetRecipientCmdlet = $false
+        #$mixedProperties = @()
+        foreach($cmdlet in $getmailbox){
+            if($query -match $cmdlet){
+                $GetMailboxCmdlet = $true
+            }
         }
-    }
-    foreach($cmdlet in $getrecipient){
-        if($query -match $cmdlet){
-            $GetRecipientCmdlet = $true
+        foreach($cmdlet in $getrecipient){
+            if($query -match $cmdlet){
+                $GetRecipientCmdlet = $true
+            }
         }
-    }
-    if($GetMailboxCmdlet -and $GetRecipientCmdlet)
-    {
-        write-host -ForegroundColor Red "FAIL"
-        Write-Host -ForegroundColor Red ">> ERROR: Mixed query detected."
-        Write-host -ForegroundColor Red ">> Review: https://brenle.github.io/MIGScripts/exo/validate-adaptivescopesopathquery/#known-limitations"
-        exit
+        if($GetMailboxCmdlet -and $GetRecipientCmdlet)
+        {
+            write-host -ForegroundColor Red "FAIL"
+            Write-Host -ForegroundColor Red ">> ERROR: Mixed query detected."
+            Write-host -ForegroundColor Red ">> Review: https://brenle.github.io/MIGScripts/exo/validate-adaptivescopesopathquery/#known-limitations"
+            exit
+        }
     }
 }
 
@@ -738,7 +742,7 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         Write-host -ForegroundColor Cyan "- Query Matches Cloud Inactive Mailboxes: " -NoNewline
         if($inactiveMailboxes -gt 0){
             Write-host -ForegroundColor Yellow "YES ($inactiveMailboxes)"
-            Write-host -ForegroundColor Magenta ">> TIP: Use 'IsInactive' to include/exclude."
+            Write-host -ForegroundColor Magenta ">> TIP: Use 'IsInactiveMailbox' to include/exclude."
         } else {
             Write-host -ForegroundColor Yellow "NO"
         }
