@@ -81,11 +81,11 @@ Get-User -RecipientTypeDetails User -ResultSize Unlimited
 
 ##### April 1st, 2022 [(70213d8)](https://github.com/brenle/MIGScripts/commit/70213d8e125f433e752b148c8428e30257ad6a9e)
 
-- Added `skipMixedPropertyDetection` and set it to default to True because it needs to be rewritten as it was causing issues
+- Added `-skipMixedPropertyDetection` and set it to default to True because it needs to be rewritten as it was causing issues
 
 ##### January 18th, 2022 [(92cf440)](https://github.com/brenle/MIGScripts/commit/92cf4409115b932bf3445785f2d1db9eb33fae98)
 
-- Added `skipQuickValidation` switch which will skip entirely the quick validation check (which looks for common mistakes)
+- Added `-skipQuickValidation` switch which will skip entirely the quick validation check (which looks for common mistakes)
 
 ##### January 11th, 2022 [(47823d2)](https://github.com/brenle/MIGScripts/commit/47823d2a7238fc6636324aa2c22bdc58fb87c6c4)
 
