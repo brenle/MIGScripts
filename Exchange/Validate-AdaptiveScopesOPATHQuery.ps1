@@ -300,7 +300,7 @@ function formatElapsedTime($totalTime){
     }
 }
 
-function getCsvFilepath([string]$path,[bool]$cloud){
+function getCsvFilepath([string]$path,[int]$type){
     
     # path should end with \
     if (!$path.EndsWith("\"))
@@ -315,10 +315,12 @@ function getCsvFilepath([string]$path,[bool]$cloud){
     }
     
     # generate file name
-    if($cloud){
+    if($type -eq 0){
         $filename = "OPATHQueryResults-Cloud-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
-    } else {
+    } elseif ($type -eq 1) {
         $filename = "OPATHQueryResults-OnPrem-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
+    } elseif ($type -eq 2) {
+        $filename = "OPATHQueryResults-UserShard-" + (Get-Date -Format "MMddyyyyHHmmss") + ".csv"
     }
 
     # verify folder exists, if not try to create it
@@ -341,11 +343,13 @@ function getCsvFilepath([string]$path,[bool]$cloud){
 $rawQueryGetMailboxPassed = $false
 $rawQueryGetRecipientPassed = $false
 $rawQueryGetOnPremObjectsPassed = $false
+$rawQueryUserShardPassed = $false
 $inactiveMailboxes = 0
 $sharedMailboxes = 0
 $resourceMailboxes = 0
 $userMailboxes = 0
 $wrongLicense = 0
+$userShardsCount = 0
 
 Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
 Write-host ""
@@ -579,6 +583,7 @@ if(!$skipQuickValidation){
 
 Write-Host -ForegroundColor Cyan "- Validating RawQuery (Full)..." -NoNewLine
 
+
 try{
     $queryStart = Get-Date
     if($scopeType -eq "User"){
@@ -632,10 +637,36 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         }
     }
     
+    # 4/19/22 - adding support for User objects (on prem user accounts with no on prem or exo mailbox)
+    # these are interesting because they are most likely accounts like service accounts which a policy wouldn't normally apply but they are included in scopes
+    # maybe not the best implementation - need to work on it
+    if($scopeType -eq "User"){
+        try{
+            #look for shards
+            $userShardStart = Get-Date
+            $userShardsCount = (Get-User -RecipientTypeDetails User -ResultSize Unlimited -ErrorAction Stop | Measure-Object).Count
+        } catch {
+            $userShardStop = Get-Date
+        }
+
+        #if shards exist, try query against them
+        #I don't want to totally fail if we can't though as the properties may not work for Get-user
+        if($userShardsCount -gt 0){
+            try{
+                $userShards = Get-User -RecipientTypeDetails User -ResultSize Unlimited -Filter $queryToTest -ErrorAction Stop
+                $rawQueryUserShardPassed = $true
+                $userShardStop = Get-Date
+            } catch {
+                $rawQueryUserShardPassed = $false
+                $userShardStop = Get-Date
+            }
+        }
+    }
+
     Write-host -ForegroundColor Green "PASSED"
     
     $matchingObjects = ($mailboxes | Measure-Object).Count
-    Write-host -ForegroundColor Cyan "- Cloud objects matching query: " -NoNewLine
+    Write-host -ForegroundColor Cyan "- Cloud objects matching query (UserMailbox/SharedMailbox/EquipmentMailbox/RoomMailbox): " -NoNewLine
     
     if($matchingObjects -eq 0){
         Write-host -ForegroundColor Yellow $matchingObjects
@@ -645,7 +676,7 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     }
 
     # 1/11/22 - adding support for onprem mailboxes (mailusers)
-    Write-Host -ForegroundColor Cyan "- On-premises objects matching query: " -NoNewline
+    Write-Host -ForegroundColor Cyan "- On-premises objects matching query (MailUser): " -NoNewline
     if($rawQueryGetOnPremObjectsPassed){
         $matchingOnPremObjects = ($onPremMailboxes | Measure-Object).Count
         if($matchingOnPremObjects -eq 0){
@@ -659,11 +690,48 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         Write-Host -ForegroundColor Yellow ">> NOTE: The OPATH syntax was not compatible with Get-Recipient which is needed to look for MailUser objects.  This does not mean the query is invalid or will not identify on-prem objects."
     }
 
-    if($matchingObjects -gt 0 -and $matchingOnPremObjects -gt 0){
-        Write-Host -ForegroundColor Cyan "- Total objects matching query: " -NoNewline
-        Write-host -ForegroundColor Green ($matchingObjects + $matchingOnPremObjects)
+    #4/19/22 - adding support for user shards
+    Write-Host -ForeGroundColor Cyan "- User Shards matching query (User): " -NoNewLine
+    if($userShardsCount -gt 0){
+        #shards were found
+        if($rawQueryUserShardPassed){
+            #shards query successful
+            $matchingUserShardObjects = ($userShards | Measure-Object).Count
+            if($matchingUserShardObjects -eq 0){
+                Write-Host -ForegroundColor Yellow $matchingUserShardObjects
+                Write-Host -ForegroundColor Yellow ">> NOTE: The query was valid, but returned no user shard results."
+            } else {
+                Write-Host -ForegroundColor Green $matchingUserShardObjects
+                Write-Host -ForeGroundColor Magenta ">> TIP: Use 'RecipientTypeDetails User' to include/exclude"
+            }
+        } else {
+            #shards query failed, but doesn't mean objects don't match so need to throw warning
+            Write-Host -ForegroundColor Yellow "FAILED"
+            Write-Host -ForegroundColor Yellow ">> NOTE: The OPATH syntax was not compatible with the Get-User cmdlet which is needed to look for User shard objects.  This does not mean the query is invalid or will not identify user shard objects."
+            Write-Host -ForeGroundColor Magenta ">> TIP: There are " -NoNewLine
+            Write-Host -ForeGroundColor Green "$userShardsCount" -NoNewLine
+            Write-Host -ForeGroundColor Magenta " user shard objects in your tenant.  Use the following cmdlet to identify them:"
+            Write-Host -ForeGroundColor Magenta ">> Get-User -RecipientTypeDetails User -ResultSize Unlimited"
+        }        
+    } else {
+        Write-Host -ForegroundColor Yellow "No user shards found in tenant."
     }
-    
+
+
+    $tempMatchCount = 0
+    if($matchingObjects -gt 0){
+        $tempMatchCount += $matchingObjects
+    }
+    if($matchingOnPremObjects -gt 0){
+        $tempMatchCount += $matchingOnPremObjects
+    }
+    if($matchingUserShardObjects -gt 0){
+        $tempMatchCount += $matchingUserShardObjects
+    }
+
+    Write-Host -ForegroundColor Cyan "- Total objects matching query: " -NoNewline
+    Write-host -ForegroundColor Green $tempMatchCount
+
     # recalculate query time
     if($rawQueryGetOnPremObjectsPassed)
     {
@@ -672,11 +740,16 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         $totalQueryTime = (determineElapsedTime $queryStart $queryStop)
     }
 
+    #include user shard query time
+    if($rawQueryUserShardPassed){
+        $totalQueryTime += (determineElapsedTime $userShardStart $userShardStop)
+    }
+
     Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
     Write-Host -ForegroundColor Green (formatElapsedTime $totalQueryTime)
 
     #no need to go further if no results
-    if($matchingObjects -eq 0 -and $matchingOnPremObjects -eq 0){
+    if($tempMatchCount -eq 0){
         exit
     }
 
@@ -754,6 +827,7 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         Write-host -ForegroundColor Cyan "- Experimental - Query Matches Incorectly Licensed Users (E/A/G1 or E/A/G3): " -NoNewline
         if($wrongLicense -gt 0){
             Write-host -ForegroundColor Yellow "YES ($wrongLicense)"
+            Write-Host -ForeGroundColor Magenta ">> TIP: This script looks to see if the PersistedCapabilities property includes 'BPOS_S_InformationBarriers'. This may be inaccurate depending on licensing and configuration."
         } else {
             Write-host -ForegroundColor Green "NO"
         }
@@ -772,13 +846,17 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         write-host -ForegroundColor Cyan "- Here is a sampling of the on-prem results (max 10):"
         $onPremMailboxes | Select-Object -First 10 | ft -a DisplayName, Alias, Identity, PrimarySmtpAddress
     }
+    if($matchingUserShardObjects -gt 0){
+        Write-host -ForegroundColor Cyan "- Here is a sampling of the user shard results (max 10):"
+        $userShards | Select-Object -First 10 | ft -a Name, UserPrincipalName
+    }
 
     if(!$exportCsv){
         Write-Host -ForegroundColor Yellow "NOTE: Run the script with -ExportCSV if you want to export all objects that matched the query."
     } else {
         if($matchingObjects -gt 0){
             Write-host -ForegroundColor Cyan "Exporting all matching cloud objects to CSV..." -NoNewline
-            $csvFile = getCsvFilepath $csvPath $true
+            $csvFile = getCsvFilepath $csvPath 0
             try{
                 $mailboxes | Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
                 Write-host -ForegroundColor Green "OK"
@@ -793,9 +871,24 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         }
         if($matchingOnPremObjects -gt 0){
             Write-host -ForegroundColor Cyan "Exporting all matching on-prem objects to CSV..." -NoNewline
-            $csvFile = getCsvFilepath $csvPath $false
+            $csvFile = getCsvFilepath $csvPath 1
             try{
                 $onPremMailboxes| Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
+                Write-host -ForegroundColor Green "OK"
+                Write-host -ForegroundColor Cyan ">> File location: " -NoNewline
+                Write-Host -ForegroundColor Magenta $csvFile
+            } catch {
+                write-host -ForegroundColor Red "FAILED"
+                Write-host -ForegroundColor Red ">> ERROR: Unable to export to '$csvFile'"
+                Write-Host -ForegroundColor Red $error[0]
+                exit
+            }
+        }
+        if($matchingUserShardObjects -gt 0){
+            Write-host -ForegroundColor Cyan "Exporting all matching user shard objects to CSV..." -NoNewline
+            $csvFile = getCsvFilepath $csvPath 2
+            try{
+                $userShards| Export-Csv -Path $csvFile -NoTypeInformation -ErrorAction Stop
                 Write-host -ForegroundColor Green "OK"
                 Write-host -ForegroundColor Cyan ">> File location: " -NoNewline
                 Write-Host -ForegroundColor Magenta $csvFile
