@@ -1,58 +1,52 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  
-  
-  <link rel="shortcut icon" href="../../img/favicon.ico">
-  <title>Validate-AdaptiveScopesOPATHQuery.ps1 - MIGScripts</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
-
-  <link rel="stylesheet" href="../../css/theme.css" />
-  <link rel="stylesheet" href="../../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "Validate-AdaptiveScopesOPATHQuery.ps1";
-    var mkdocs_page_input_path = "exo\\validate-adaptivescopesopathquery.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Validate-AdaptiveScopesOPATHQuery.ps1 - MIGScripts</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Validate-AdaptiveScopesOPATHQuery.ps1";
+        var mkdocs_page_input_path = "exo\\validate-adaptivescopesopathquery.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
 </head>
 
 <body class="wy-body-for-nav" role="document">
 
   <div class="wy-grid-for-nav">
-
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
     <div class="wy-side-scroll">
       <div class="wy-side-nav-search">
-        <a href="../.." class="icon icon-home"> MIGScripts</a>
-        <div role="search">
+          <a href="../.." class="icon icon-home"> MIGScripts
+        </a><div role="search">
   <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
       <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
   </form>
 </div>
       </div>
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">Exchange</span></p>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">Validate-AdaptiveScopesOPATHQuery.ps1</a>
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Exchange</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Validate-AdaptiveScopesOPATHQuery.ps1</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a>
     </li>
@@ -76,6 +70,12 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#april-19th-2022-6681d82">April 19th, 2022 (6681d82)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#april-1st-2022-70213d8">April 1st, 2022 (70213d8)</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#january-18th-2022-92cf440">January 18th, 2022 (92cf440)</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#january-11th-2022-47823d2">January 11th, 2022 (47823d2)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#january-5th-2022-39ad9d4">January 5th, 2022 (39ad9d4)</a>
@@ -87,53 +87,40 @@
         </ul>
     </li>
     </ul>
-                    </li>
-                </ul>
-                <p class="caption"><span class="caption-text">SharePoint/OneDrive</span></p>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../../spo-od/adaptive-scopes-propertybag-scripts/">Adaptive Scopes Property Bag Scripts</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="" href="https://github.com/brenle/MIGScripts/issues">⚠️ Submit an issue</a>
-                    </li>
-                </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">SharePoint/OneDrive</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../spo-od/adaptive-scopes-propertybag-scripts/">Adaptive Scopes Property Bag Scripts</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="" href="https://github.com/brenle/MIGScripts/issues">⚠️ Submit an issue</a>
+                </li>
+              </ul>
       </div>
     </div>
     </nav>
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="../..">MIGScripts</a>
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">MIGScripts</a>
+        
       </nav>
-
-      
       <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="../..">Docs</a> &raquo;</li>
-    
-      
-        
-          <li>Exchange &raquo;</li>
-        
-      
-    
-    <li>Validate-AdaptiveScopesOPATHQuery.ps1</li>
+    <li><a href="../.." class="icon icon-home" alt="Docs"></a> &raquo;</li>
+          <li>Exchange &raquo;</li><li>Validate-AdaptiveScopesOPATHQuery.ps1</li>
     <li class="wy-breadcrumbs-aside">
-      
     </li>
   </ul>
-  
   <hr/>
 </div>
 
-          <div role="main">
-            <div class="section">
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
               
                 <h1 id="validate-adaptivescopesopathqueryps1">Validate-AdaptiveScopesOPATHQuery.ps1<a class="headerlink" href="#validate-adaptivescopesopathqueryps1" title="Permanent link">⚓︎</a></h1>
 <p>This script can be used to validate advanced adaptive scopes queries written in OPATH.</p>
@@ -190,53 +177,59 @@
 <h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
 <p>Access the script <a href="https://github.com/brenle/MIGScripts/blob/main/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1">here</a></p>
 <h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">⚓︎</a></h2>
-<h5 id="january-11th-2022-47823d2">January 11th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/47823d2a7238fc6636324aa2c22bdc58fb87c6c4#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360">(47823d2)</a><a class="headerlink" href="#january-11th-2022-47823d2" title="Permanent link">⚓︎</a></h5>
+<h5 id="april-19th-2022-6681d82">April 19th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/6681d82436e1b0bf0e85ff85f20db0cd72ca6274">(6681d82)</a><a class="headerlink" href="#april-19th-2022-6681d82" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Added support for user shards. These are on prem users that have no license assigned and no mailbox exists in onprem or in EXO.  As an example, service accounts. These are usually not used but they are included in adaptive scopes, so for validation we want to count them.  To identify these types of users in your environment, run the following in EXO PS:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">Get-User</span> <span class="n">-RecipientTypeDetails</span> <span class="n">User</span> <span class="n">-ResultSize</span> <span class="n">Unlimited</span>
+</code></pre></div>
+<h5 id="april-1st-2022-70213d8">April 1st, 2022 <a href="https://github.com/brenle/MIGScripts/commit/70213d8e125f433e752b148c8428e30257ad6a9e">(70213d8)</a><a class="headerlink" href="#april-1st-2022-70213d8" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Added <code>skipMixedPropertyDetection</code> and set it to default to True because it needs to be rewritten as it was causing issues</li>
+</ul>
+<h5 id="january-18th-2022-92cf440">January 18th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/92cf4409115b932bf3445785f2d1db9eb33fae98">(92cf440)</a><a class="headerlink" href="#january-18th-2022-92cf440" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Added <code>skipQuickValidation</code> switch which will skip entirely the quick validation check (which looks for common mistakes)</li>
+</ul>
+<h5 id="january-11th-2022-47823d2">January 11th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/47823d2a7238fc6636324aa2c22bdc58fb87c6c4">(47823d2)</a><a class="headerlink" href="#january-11th-2022-47823d2" title="Permanent link">⚓︎</a></h5>
 <ul>
 <li>Added support for on-prem users in hybrid environment (MailUser)</li>
 <li>Added warning for inactive mailboxes discovered by Get-Recipient</li>
 <li>Added quick validation for mixed properties</li>
 </ul>
-<h5 id="january-5th-2022-39ad9d4">January 5th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/39ad9d4f80599c69a99318b28aa01ad421d87482#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360">(39ad9d4)</a><a class="headerlink" href="#january-5th-2022-39ad9d4" title="Permanent link">⚓︎</a></h5>
+<h5 id="january-5th-2022-39ad9d4">January 5th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/39ad9d4f80599c69a99318b28aa01ad421d87482">(39ad9d4)</a><a class="headerlink" href="#january-5th-2022-39ad9d4" title="Permanent link">⚓︎</a></h5>
 <ul>
 <li>Added support for SharedMailbox, EquipmentMailbox and RoomMailbox recipient types</li>
 <li>Rewrote analysis to provide stats for number of shared/resource mailboxes in addition to inactive/incorrectly licensed</li>
 </ul>
-<h5 id="november-7th-2021-6d829d5">November 7th, 2021 <a href="https://github.com/brenle/MIGScripts/commit/6d829d5acf12f5b3a8e43383089106ff2c3b4d51#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360">(6d829d5)</a><a class="headerlink" href="#november-7th-2021-6d829d5" title="Permanent link">⚓︎</a></h5>
+<h5 id="november-7th-2021-6d829d5">November 7th, 2021 <a href="https://github.com/brenle/MIGScripts/commit/6d829d5acf12f5b3a8e43383089106ff2c3b4d51">(6d829d5)</a><a class="headerlink" href="#november-7th-2021-6d829d5" title="Permanent link">⚓︎</a></h5>
 <ul>
 <li>Updated documentation link</li>
 <li>Improved detection of inactive mailboxes</li>
 <li>Added total number of inactive mailboxes in query because of improvements</li>
 <li>Added detection of improperly licensed users (<strong>Experimental!</strong> <em>This may incorrectly report depending on the license or add-on</em>)</li>
 </ul>
-<h5 id="november-4th-2021-6c5e7c0">November 4th, 2021 <a href="https://github.com/brenle/MIGScripts/commit/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360">(6c5e7c0)</a><a class="headerlink" href="#november-4th-2021-6c5e7c0" title="Permanent link">⚓︎</a></h5>
+<h5 id="november-4th-2021-6c5e7c0">November 4th, 2021 <a href="https://github.com/brenle/MIGScripts/commit/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d">(6c5e7c0)</a><a class="headerlink" href="#november-4th-2021-6c5e7c0" title="Permanent link">⚓︎</a></h5>
 <ul>
 <li>Initial release</li>
 </ul>
               
             </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../.." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="../../spo-od/adaptive-scopes-propertybag-scripts/" class="btn btn-neutral float-right" title="Adaptive Scopes Property Bag Scripts">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../.." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <!-- Copyright etc -->
-    
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
 </footer>
-      
+          
         </div>
       </div>
 
@@ -244,7 +237,7 @@
 
   </div>
 
-  <div class="rst-versions" role="note" aria-label="versions">
+  <div class="rst-versions" role="note" aria-label="Versions">
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
