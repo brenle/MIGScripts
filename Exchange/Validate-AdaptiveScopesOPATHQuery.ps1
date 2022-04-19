@@ -351,7 +351,7 @@ $userMailboxes = 0
 $wrongLicense = 0
 $userShardsCount = 0
 
-Write-host -ForegroundColor Yellow "NOTE: This script is provided only as an example script and with no support."
+Write-host -ForegroundColor Yellow -BackgroundColor Red "NOTE: This script is provided only as an example script and with no support."
 Write-host ""
 #verify EXO connectivity
 write-Host -BackgroundColor White -ForegroundColor Black ".:| Verifying Required Connectivity |:."
