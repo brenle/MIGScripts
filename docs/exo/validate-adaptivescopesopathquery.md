@@ -71,25 +71,41 @@ Access the script [here](https://github.com/brenle/MIGScripts/blob/main/Exchange
 
 ## Changelog
 
-##### January 11th, 2022 [(47823d2)](https://github.com/brenle/MIGScripts/commit/47823d2a7238fc6636324aa2c22bdc58fb87c6c4#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360)
+##### April 19th, 2022 [(6681d82)](https://github.com/brenle/MIGScripts/commit/6681d82436e1b0bf0e85ff85f20db0cd72ca6274)
+
+- Added support for user shards. These are on prem users that have no license assigned and no mailbox exists in onprem or in EXO.  As an example, service accounts. These are usually not used but they are included in adaptive scopes, so for validation we want to count them.  To identify these types of users in your environment, run the following in EXO PS:
+
+``` powershell
+Get-User -RecipientTypeDetails User -ResultSize Unlimited
+```
+
+##### April 1st, 2022 [(70213d8)](https://github.com/brenle/MIGScripts/commit/70213d8e125f433e752b148c8428e30257ad6a9e)
+
+- Added `skipMixedPropertyDetection` and set it to default to True because it needs to be rewritten as it was causing issues
+
+##### January 18th, 2022 [(92cf440)](https://github.com/brenle/MIGScripts/commit/92cf4409115b932bf3445785f2d1db9eb33fae98)
+
+- Added `skipQuickValidation` switch which will skip entirely the quick validation check (which looks for common mistakes)
+
+##### January 11th, 2022 [(47823d2)](https://github.com/brenle/MIGScripts/commit/47823d2a7238fc6636324aa2c22bdc58fb87c6c4)
 
 - Added support for on-prem users in hybrid environment (MailUser)
 - Added warning for inactive mailboxes discovered by Get-Recipient
 - Added quick validation for mixed properties
 
-##### January 5th, 2022 [(39ad9d4)](https://github.com/brenle/MIGScripts/commit/39ad9d4f80599c69a99318b28aa01ad421d87482#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360)
+##### January 5th, 2022 [(39ad9d4)](https://github.com/brenle/MIGScripts/commit/39ad9d4f80599c69a99318b28aa01ad421d87482)
 
 - Added support for SharedMailbox, EquipmentMailbox and RoomMailbox recipient types
 - Rewrote analysis to provide stats for number of shared/resource mailboxes in addition to inactive/incorrectly licensed
 
-##### November 7th, 2021 [(6d829d5)](https://github.com/brenle/MIGScripts/commit/6d829d5acf12f5b3a8e43383089106ff2c3b4d51#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360)
+##### November 7th, 2021 [(6d829d5)](https://github.com/brenle/MIGScripts/commit/6d829d5acf12f5b3a8e43383089106ff2c3b4d51)
 
 - Updated documentation link
 - Improved detection of inactive mailboxes
 - Added total number of inactive mailboxes in query because of improvements
 - Added detection of improperly licensed users (**Experimental!** *This may incorrectly report depending on the license or add-on*)
 
-##### November 4th, 2021 [(6c5e7c0)](https://github.com/brenle/MIGScripts/commit/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d#diff-d66eb284e212b1b6f1b77953502640bbff7c6cf68a740538c399132a83193360)
+##### November 4th, 2021 [(6c5e7c0)](https://github.com/brenle/MIGScripts/commit/6c5e7c01c9815d189eda8b81e3ee5a0933477c8d)
 
 
 - Initial release
