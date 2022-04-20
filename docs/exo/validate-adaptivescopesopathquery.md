@@ -71,6 +71,11 @@ Access the script [here](https://github.com/brenle/MIGScripts/blob/main/Exchange
 
 ## Changelog
 
+##### April 20th, 2022 [(0f1348c)](https://github.com/brenle/MIGScripts/commit/0f1348c21e9646258336b082347f6d40bc5609ef)
+
+- Fixed bug where GuestMailUser objects would appear. These objects will not show in an adaptive scope and are not supported for retention policies.
+- Rearranged output to improve readability
+
 ##### April 19th, 2022 [(6681d82)](https://github.com/brenle/MIGScripts/commit/6681d82436e1b0bf0e85ff85f20db0cd72ca6274)
 
 - Added support for user shards. These are on prem users that have no license assigned and no mailbox exists in onprem or in EXO.  As an example, service accounts. These are usually not used but they are included in adaptive scopes, so for validation we want to count them.  To identify these types of users in your environment, run the following in EXO PS:
