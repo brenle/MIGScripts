@@ -621,7 +621,7 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
     if($scopeType -eq "User"){
         try{
             $onpremQueryStart = Get-Date
-            $onPremMailboxes = Get-MailUser -Filter $queryToTest -ResultSize Unlimited -ErrorAction Stop
+            $onPremMailboxes = Get-MailUser -RecipientTypeDetails MailUser -Filter $queryToTest -ResultSize Unlimited -ErrorAction Stop
             $rawQueryGetOnPremObjectsPassed = $true
             $onpremQueryStop = Get-Date
         } catch {
@@ -717,44 +717,9 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         Write-Host -ForegroundColor Yellow "No user shards found in tenant."
     }
 
-
-    $tempMatchCount = 0
-    if($matchingObjects -gt 0){
-        $tempMatchCount += $matchingObjects
-    }
-    if($matchingOnPremObjects -gt 0){
-        $tempMatchCount += $matchingOnPremObjects
-    }
-    if($matchingUserShardObjects -gt 0){
-        $tempMatchCount += $matchingUserShardObjects
-    }
-
-    Write-Host -ForegroundColor Cyan "- Total objects matching query: " -NoNewline
-    Write-host -ForegroundColor Green $tempMatchCount
-
-    # recalculate query time
-    if($rawQueryGetOnPremObjectsPassed)
-    {
-        $totalQueryTime = (determineElapsedTime $queryStart $queryStop) + (determineElapsedTime $onpremQueryStart $onpremQueryStop)
-    } else {
-        $totalQueryTime = (determineElapsedTime $queryStart $queryStop)
-    }
-
-    #include user shard query time
-    if($rawQueryUserShardPassed){
-        $totalQueryTime += (determineElapsedTime $userShardStart $userShardStop)
-    }
-
-    Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
-    Write-Host -ForegroundColor Green (formatElapsedTime $totalQueryTime)
-
-    #no need to go further if no results
-    if($tempMatchCount -eq 0){
-        exit
-    }
-
     # 1/11/22 - don't run if there are no resources
     if($matchingObjects -gt 0){
+        $cloudAnalysisStart = Get-Date
         Write-host ""
         Write-Host -BackgroundColor White -ForegroundColor Black ".:| Checking cloud object properties |:."
         Write-host ""
@@ -831,6 +796,52 @@ if($rawQueryGetMailboxPassed -or $rawQueryGetRecipientPassed){
         } else {
             Write-host -ForegroundColor Green "NO"
         }
+        $cloudAnalysisStop = Get-Date
+    }
+
+    Write-host ""
+    Write-Host -BackgroundColor White -ForegroundColor Black ".:| Totals |:."
+    Write-host ""
+
+    $tempMatchCount = 0
+    if($matchingObjects -gt 0){
+        $tempMatchCount += $matchingObjects
+    }
+    if($matchingOnPremObjects -gt 0){
+        $tempMatchCount += $matchingOnPremObjects
+    }
+    if($matchingUserShardObjects -gt 0){
+        $tempMatchCount += $matchingUserShardObjects
+    }
+
+    Write-Host -ForegroundColor Cyan "- Total objects matching query: " -NoNewline
+    Write-host -ForegroundColor Green $tempMatchCount
+
+    # recalculate query time
+    if($rawQueryGetOnPremObjectsPassed)
+    {
+        $totalQueryTime = (determineElapsedTime $queryStart $queryStop) + (determineElapsedTime $onpremQueryStart $onpremQueryStop)
+    } else {
+        $totalQueryTime = (determineElapsedTime $queryStart $queryStop)
+    }
+
+    #include user shard query time
+    if($rawQueryUserShardPassed){
+        $totalQueryTime += (determineElapsedTime $userShardStart $userShardStop)
+    }
+
+    Write-Host -ForegroundColor Cyan "- Total Query Time: " -NoNewline
+    Write-Host -ForegroundColor Green (formatElapsedTime $totalQueryTime)
+
+    if($matchingObjects -gt 0){
+        $totalAnalysisTime = (determineElapsedTime $cloudAnalysisStart $cloudAnalysisStop)
+        Write-Host -ForegroundColor Cyan "- Total Cloud Object Analysis Time: " -NoNewline
+        Write-Host -ForegroundColor Green (formatElapsedTime $totalAnalysisTime)
+    }
+
+    #no need to go further if no results
+    if($tempMatchCount -eq 0){
+        exit
     }
    
     Write-host ""
