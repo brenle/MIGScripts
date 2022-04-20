@@ -70,6 +70,8 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#changelog">Changelog</a>
         <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#april-20th-2022-0f1348c">April 20th, 2022 (0f1348c)</a>
+    </li>
     <li class="toctree-l3"><a class="reference internal" href="#april-19th-2022-6681d82">April 19th, 2022 (6681d82)</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#april-1st-2022-70213d8">April 1st, 2022 (70213d8)</a>
@@ -177,6 +179,11 @@
 <h2 id="download">Download<a class="headerlink" href="#download" title="Permanent link">⚓︎</a></h2>
 <p>Access the script <a href="https://github.com/brenle/MIGScripts/blob/main/Exchange/Validate-AdaptiveScopesOPATHQuery.ps1">here</a></p>
 <h2 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">⚓︎</a></h2>
+<h5 id="april-20th-2022-0f1348c">April 20th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/0f1348c21e9646258336b082347f6d40bc5609ef">(0f1348c)</a><a class="headerlink" href="#april-20th-2022-0f1348c" title="Permanent link">⚓︎</a></h5>
+<ul>
+<li>Fixed bug where GuestMailUser objects would appear. These objects will not show in an adaptive scope and are not supported for retention policies.</li>
+<li>Rearranged output to improve readability</li>
+</ul>
 <h5 id="april-19th-2022-6681d82">April 19th, 2022 <a href="https://github.com/brenle/MIGScripts/commit/6681d82436e1b0bf0e85ff85f20db0cd72ca6274">(6681d82)</a><a class="headerlink" href="#april-19th-2022-6681d82" title="Permanent link">⚓︎</a></h5>
 <ul>
 <li>Added support for user shards. These are on prem users that have no license assigned and no mailbox exists in onprem or in EXO.  As an example, service accounts. These are usually not used but they are included in adaptive scopes, so for validation we want to count them.  To identify these types of users in your environment, run the following in EXO PS:</li>
