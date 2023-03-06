@@ -199,7 +199,7 @@ Write-Host -ForegroundColor Gray -BackgroundColor Black "Initial Data:"
 #test upn
 try{
     Write-Host "Mailbox information: " -NoNewLine
-    $targetMailbox = Get-Mailbox $mailboxIdentity -ErrorAction Stop
+    $targetMailbox = Get-Mailbox $mailboxIdentity -IncludeInactiveMailbox -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
 } catch {
     write-Host -ForegroundColor Red "ERROR"
@@ -315,13 +315,13 @@ Write-Host -ForegroundColor Gray -BackgroundColor Black -NoNewLine "Target Mailb
 Write-host " " $targetMailbox.DisplayName
 
 #Test mailbox size
-if ((Get-MailboxStatistics $targetMailbox.UserPrincipalName | Select-Object *, @{Name="TotalItemSizeMB"; Expression={[math]::Round(($_.TotalItemSize.ToString().Split("(")[1].Split(" ")[0].Replace(",","")/1MB),0)}}).TotalItemSizeMB -lt 10){
+if ((Get-MailboxStatistics $targetMailbox.UserPrincipalName -IncludeSoftDeletedRecipients | Select-Object *, @{Name="TotalItemSizeMB"; Expression={[math]::Round(($_.TotalItemSize.ToString().Split("(")[1].Split(" ")[0].Replace(",","")/1MB),0)}}).TotalItemSizeMB -lt 10){
     Write-Host -ForegroundColor Yellow "WARNING: This mailbox is less than 10MB in size so the managed folder assistant (MFA) will not automatically run."
     $under10MB = $true
 }
 
 #Get ELC
-$diagLogs = Export-MailboxDiagnosticLogs $targetMailbox.primarysmtpaddress -ExtendedProperties
+$diagLogs = Export-MailboxDiagnosticLogs $targetMailbox.primarysmtpaddress -ExtendedProperties -IncludeInactiveMailboxes
 $xmlProperties = [xml]($diagLogs.MailboxLog)
 $ELCLastSuccess = $xmlProperties.Properties.MailboxTable.property | ?{$_.Name -like "ELCLastSuccessTimestamp"}
 
@@ -473,7 +473,7 @@ if(($orgConfig.InPlaceHolds | Measure-Object).Count -gt 0){
 }
 
 ### Get Mailbox Hold History ###
-$ht = Export-MailboxDiagnosticLogs $targetMailbox.UserPrincipalName -ComponentName HoldTracking
+$ht = Export-MailboxDiagnosticLogs -IncludeInactiveMailboxes $targetMailbox.UserPrincipalName -ComponentName HoldTracking
 
 if($ht.MailboxLog.Length -gt 2){
     
@@ -538,7 +538,7 @@ if($ht.MailboxLog.Length -gt 2){
 }
 
 ### Substrate hold history
-$hts = Export-MailboxDiagnosticLogs $targetMailbox.UserPrincipalName -ComponentName SubstrateHoldTracking
+$hts = Export-MailboxDiagnosticLogs $targetMailbox.UserPrincipalName -IncludeInactiveMailboxes -ComponentName SubstrateHoldTracking
 
 if($hts.MailboxLog.Length -gt 2){
 
