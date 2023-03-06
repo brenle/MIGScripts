@@ -198,7 +198,7 @@ Write-Host -ForegroundColor Gray -BackgroundColor Black "Initial Data:"
 
 #test upn
 try{
-    Write-Host "Mailbox information: " -NoNewLine
+    Write-Host " Mailbox information: " -NoNewLine
     $targetMailbox = Get-Mailbox $mailboxIdentity -IncludeInactiveMailbox -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
 } catch {
@@ -209,7 +209,7 @@ try{
 
 #get org config
 Try{
-    Write-Host "Organization Config: " -NoNewLine
+    Write-Host " Organization Config: " -NoNewLine
     $orgConfig = Get-OrganizationConfig -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotOrgConfig = $true
@@ -222,7 +222,7 @@ Try{
 
 #get retention policies
 Try{
-    Write-Host "Retention Policies: " -NoNewLine
+    Write-Host " Retention Policies: " -NoNewLine
     $sccRetentionPolicies = Get-RetentionCompliancePolicy -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotRetentionPolicies = $true
@@ -244,7 +244,7 @@ if($gotRetentionPolicies -and ($sccRetentionPolicies -ne $null)){
 
 #get app retention policies
 Try{
-    Write-Host "App Retention Policies: " -NoNewLine
+    Write-Host " App Retention Policies: " -NoNewLine
     $appRetentionPolicies = Get-AppRetentionCompliancePolicy -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotAppRetentionPolicies = $true
@@ -266,7 +266,7 @@ if($gotAppRetentionPolicies -and ($appRetentionPolicies -ne $null)){
 
 #get cases
 Try{
-    Write-Host "eDiscovery Cases: " -NoNewLine
+    Write-Host " eDiscovery Cases: " -NoNewLine
     $eDiscoveryCoreCases = Get-ComplianceCase -CaseType eDiscovery -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotLegalCases = $true
@@ -289,7 +289,7 @@ if($gotLegalCases -and ($eDiscoveryCoreCases -ne $null)){
 
 #get AED cases
 Try{
-    Write-Host "Advanced eDiscovery Cases: " -NoNewLine
+    Write-Host " Advanced eDiscovery Cases: " -NoNewLine
     $AeDCases = Get-ComplianceCase -CaseType AdvancedEdiscovery -ErrorAction Stop
     Write-host -ForegroundColor Green "OK"
     $gotAeDLegalCases = $true
@@ -313,6 +313,9 @@ if($gotAeDLegalCases -and ($AeDCases -ne $null)){
 
 Write-Host -ForegroundColor Gray -BackgroundColor Black -NoNewLine "Target Mailbox:"
 Write-host " " $targetMailbox.DisplayName
+
+Write-Host -ForegroundColor Gray -BackgroundColor Black -NoNewLine "Is inactive?:"
+Write-Host " " $targetMailbox.IsInactiveMailbox
 
 #Test mailbox size
 if ((Get-MailboxStatistics $targetMailbox.UserPrincipalName -IncludeSoftDeletedRecipients | Select-Object *, @{Name="TotalItemSizeMB"; Expression={[math]::Round(($_.TotalItemSize.ToString().Split("(")[1].Split(" ")[0].Replace(",","")/1MB),0)}}).TotalItemSizeMB -lt 10){
